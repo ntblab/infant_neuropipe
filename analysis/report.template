@@ -1,0 +1,15 @@
+<HTML><HEAD><link REL=stylesheet TYPE=text/css href=.files/fsl.css>
+<h2>Summary</h2>
+<!--poststatspsstart-->
+<hr><p>Aggregate plots found with the path name: <?= $PATH_NAME ?>
+<!--poststatspsstop-->
+
+<!--poststatspicsstart-->
+
+<hr><b>Participants</b><p>
+    
+<!--poststatspicsstop-->
+<!--poststatstsplotstart-->
+<!--poststatstsplotstop-->
+
+</BODY></HTML>
