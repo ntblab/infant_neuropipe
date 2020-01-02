@@ -1,12 +1,11 @@
 % Create a rotating plot of the motion trajectory for each participant in
 % 3d. This plot slowly rotates around the trailing trajectory in the center
 
-function motion_trajectory_plotter(input_file, output_file)
+function motion_trajectory_plotter(ppt)
 
-if nargin == 0
-    input_file='subjects/0924161_dev02/analysis/firstlevel/Confounds/MotionParameters_functional01.par';
-    output_file='subjects/0924161_dev02/analysis/firstlevel/Confounds/MotionParameters_functional01';
-end
+% Get the input and output files
+input_file=sprintf('subjects/%s/analysis/firstlevel/Confounds/MotionParameters_functional01.par', ppt);
+output_file=sprintf('subjects/%s/analysis/firstlevel/Confounds/MotionParameters_functional01', ppt);
 
 motion=textread(input_file);
 trailing_edge = 20;

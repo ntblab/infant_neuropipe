@@ -64,17 +64,6 @@ proj_dir = globals_struct.PROJ_DIR;
 % What is the participant information?
 fid=fopen([proj_dir, '/scripts/Participant_Data.txt']);
 
-% If you are running this locally then do this
-counter=0;
-while fid==-1
-    if counter==0
-        fid=fopen('/Volumes/dev02/scripts/Participant_Data.txt');
-    else
-        fid=fopen(sprintf('/Volumes/dev02-%d/scripts/Participant_Data.txt', counter));
-    end
-    counter=counter+1;
-end
-
 ParticipantList={};
 
 while 1

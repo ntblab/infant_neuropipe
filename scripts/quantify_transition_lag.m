@@ -11,13 +11,8 @@
 
 function Lag_data = quantify_transition_lag(output_dir, varargin)
 
-% Preset the parameters if not supplied
-if nargin == 0
-    output_dir = 'results/quantify_lag/Princeton_MRRC_18/';
-    participant_parameters={'included_sessions', {'dev02', 'FAS'}, 'Max_Age', 18};
-else
-    participant_parameters=varargin{1};
-end
+% Preset the parameters
+participant_parameters=varargin{1};
 
 % Make it if it doesn't exist
 mkdir(output_dir);
