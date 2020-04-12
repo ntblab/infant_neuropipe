@@ -507,7 +507,7 @@ for functional_run = functional_runs
                 % but is within the next 6s, assume this is because of slop in
                 % the timing between blocks
                 if next_onset ~= LastTR && next_onset < LastTR + 6
-                    warning('There is %0.1f TRs between this block and the next', next_onset - LastTR)
+                    warning('There is %0.1f extra TRs between this block and the next', next_onset - LastTR)
                 end
                 
             end
