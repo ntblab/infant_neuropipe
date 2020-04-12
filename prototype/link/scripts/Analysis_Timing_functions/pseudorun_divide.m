@@ -228,6 +228,11 @@ for pseudorun_counter = 1:num_pseudoruns
             
             % Get the specified burn in
             real_burn_in = str2num(split_line{2});
+            
+            if pseudorun_counter == 1
+                % Also store that this pseudorun has a different burn in
+                pseudorun_burnin(pseudorun_counter) = str2num(split_line{2});
+            end
         end
         line = fgetl(fid);
         
