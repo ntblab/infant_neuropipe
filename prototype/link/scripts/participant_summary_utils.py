@@ -1,6 +1,8 @@
 ## Create the functions needed to run participant_summary.ipynb
 # Various functions are defined herein that preprocess information generated throughout the pipeline in order to facilitate viewing.
 
+# Edited TY 04032020
+
 import numpy as np
 import os
 import glob
@@ -10,6 +12,7 @@ import matplotlib.image as mpimg
 from scipy import stats
 from scipy.io import loadmat
 import matplotlib
+import nilearn.plotting as plotting
 matplotlib.rcParams['figure.dpi'] = 100
 
 # Generate the descriptives for this run
@@ -243,6 +246,16 @@ def summarise_firstlevel(func_run):
         plt.title('Example voxel time course z scored')
         
         # Create the registration plots
+        
+        #First check manual registration
+        manual_reg_file=feat_folder+'reg/Manual_Reg/'
+        
+        if os.path.isdir(manual_reg_file):
+            print('functional%s was manually aligned' % func_run)
+        else:
+            print('!#!#!#!#!#!#!#! functional%s was not manually aligned !#!#!#!#!#!#!#!' % func_run)
+        
+        
         example_func_file = feat_folder + 'reg/example_func2highres.nii.gz'
         highres_file = feat_folder + 'reg/highres.nii.gz'
         
@@ -422,37 +435,53 @@ def summarise_secondlevel():
     highres_file = reg_folder + 'reg/highres2standard.nii.gz'
     standard_file = reg_folder + 'reg/standard.nii.gz'
     
+    manual_reg_folder=reg_folder+'reg/Manual_Reg_Standard/'
+    
+    if os.path.isdir(manual_reg_folder):
+        print('Manual registration to standard has been performed')
+    else:
+        print('!#!#!#!#!#!#!#!\n!#!#!#!#!#!#!#!\n\nCheck that you manually aligned HighRes to Standard\n\n!#!#!#!#!#!#!#!\n!#!#!#!#!#!#!#!\n')
+    
     # Load the files
     if os.path.isfile(highres_file):
         
-        highres = nibabel.load(highres_file).get_data()
-        standard = nibabel.load(standard_file).get_data()
+        # Load the images
+        highres = nibabel.load(highres_file)
+        standard = nibabel.load(standard_file)
+        
+        # Show the interactive viewer for standard and highres
+        fig=plotting.view_img(highres,bg_img=standard,opacity=0.4)
+        
+        #highres = nibabel.load(highres_file).get_data()
+        #standard = nibabel.load(standard_file).get_data()
         
         # Set the range 
-        highres /= highres.max()
-        standard = np.divide(standard, standard.max())
+        #highres /= highres.max()
+        #standard = np.divide(standard, standard.max())
         
         # Get slice idxs
-        saggital_idx = highres.shape[0] // 2
-        coronal_idx = highres.shape[1] // 2
-        axial_idx = highres.shape[2] // 2
+        #saggital_idx = highres.shape[0] // 2
+        #coronal_idx = highres.shape[1] // 2
+        #axial_idx = highres.shape[2] // 2
 
-        plt.figure(figsize=(10,5))
-        plt.subplot(1, 3, 1)
-        highres_slice = np.squeeze(highres[saggital_idx, :, :])
-        standard_slice = np.squeeze(standard[saggital_idx, :, :])
-        overlay_slices(standard_slice, highres_slice)
+        #plt.figure(figsize=(10,5))
+        #plt.subplot(1, 3, 1)
+        #highres_slice = np.squeeze(highres[saggital_idx, :, :])
+        #standard_slice = np.squeeze(standard[saggital_idx, :, :])
+        #overlay_slices(standard_slice, highres_slice)
 
-        plt.subplot(1, 3, 2)
-        highres_slice = np.squeeze(highres[:, coronal_idx, :])
-        standard_slice = np.squeeze(standard[:, coronal_idx, :])
-        overlay_slices(standard_slice, highres_slice)
+        #plt.subplot(1, 3, 2)
+        #highres_slice = np.squeeze(highres[:, coronal_idx, :])
+        #standard_slice = np.squeeze(standard[:, coronal_idx, :])
+        #overlay_slices(standard_slice, highres_slice)
 
-        plt.subplot(1, 3, 3)
-        highres_slice = np.squeeze(highres[:, :, axial_idx])
-        standard_slice = np.squeeze(standard[:, :, axial_idx])        
-        overlay_slices(standard_slice, highres_slice)
+        #plt.subplot(1, 3, 3)
+        #highres_slice = np.squeeze(highres[:, :, axial_idx])
+        #standard_slice = np.squeeze(standard[:, :, axial_idx])        
+        #overlay_slices(standard_slice, highres_slice)
     else:
+        # Set to nothing
+        fig=[]
         print('%s doesn''t exist' % highres_file)
         
     # Check the secondlevel experiment folders that exist
@@ -486,7 +515,7 @@ def summarise_secondlevel():
         # Pull out the data
         stacked_labels = []
         stacked_data = []
-        for category_counter in range(len(stacked_data_all['stacked_labels'][0])):
+        for category_counter in range(len(stacked_data_all['ppt_stacked_data'][0])):
             stacked_labels.append(stacked_data_all['stacked_labels'][0][category_counter][0])
             stacked_data.append(stacked_data_all['ppt_stacked_data'][0][category_counter])
 
@@ -499,7 +528,11 @@ def summarise_secondlevel():
     else:
         print('%s doesn''t exist' % stacked_data_name)
             
-        
+
+    print('\n\nReturning an interactive view of the registration from high res to standard for double-checking. If you want to do this for any of the functional to highres registrations, run this block of code (substitute func_run): \n\nimport nibabel as nib \nfrom nilearn import image \nfunc_run="01a" #which functional? \nfunc=nib.load("analysis/firstlevel/functional%s.feat/reg/example_func.nii.gz" % func_run)\nhighres=nib.load("analysis/firstlevel/functional%s.feat/reg/highres2example_func.nii.gz" % func_run) \nplotting.view_img(func,bg_img=highres,opacity=0.4)')
+          
+    return fig
+
 def overlay_slices(bottom_slice, top_slice):
     
     # Add an alpha layer for the second slice
