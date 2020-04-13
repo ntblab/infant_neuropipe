@@ -1,6 +1,16 @@
 # Development project analysis pipeline
 ## V_1.1
 
+-----------------------------------------
+
+Branch for code associated with manuscript:
+Ellis, Skalaban, Yates, Bejjanki, Cordova, & Turk-Browne (in prep). *How to read a baby's mind: Redesigning fMRI for awake, behaving infants*.
+
+Read scripts/preprocessing_exploration/README.md to get oriented
+
+-----------------------------------------
+
+
 Although substantial advances have been made in analyzing adult fMRI data using automated pipelines (e.g., HCP, fmriprep) these procedures typically do not work with infant fMRI data. Infants have small brains which mean that alignment to standard is difficult and they have different motion properties which means adult protocols for dealing with motion are inappropriate. Complicating this further, every session with an infant can be unique and thus without proper infrastructure will require extreme efforts in order to process them.
 
 In this repository you will find the analysis pipeline used by the Turk-Browne lab for analyzing developmental fMRI data. This semi-automated pipeline allows users to preprocess task-based infant fMRI data in a robust and efficient way that minimizes the amount of manual intervention needed. This code is based on neuropipe and extended to meet the specific needs of developmental data. Below, you will find a schematic overview of the analysis pipeline. To analyze a participant's data so that it is ready for experiment-specific analyses only a few functions, based on the color steps coded in the schematic, must be run. However, throughout there are some manual steps and a lot of checks for quality assurance. For a more thorough description of the steps involved, review the 'Running a participant' subsection. For a visual walkthrough of the procedure, refer to 'infant\_neuropipe\_tutorial.pdf'
