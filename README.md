@@ -1,5 +1,15 @@
 # Development project analysis pipeline
-## V_1.0
+## V_1.1
+
+-----------------------------------------
+
+Branch for code associated with manuscript:
+Ellis, Skalaban, Yates, Bejjanki, Cordova, & Turk-Browne (in prep). *How to read a baby's mind: Redesigning fMRI for awake, behaving infants*.
+
+Read scripts/preprocessing_exploration/README.md to get oriented
+
+-----------------------------------------
+
 
 Although substantial advances have been made in analyzing adult fMRI data using automated pipelines (e.g., HCP, fmriprep) these procedures typically do not work with infant fMRI data. Infants have small brains which mean that alignment to standard is difficult and they have different motion properties which means adult protocols for dealing with motion are inappropriate. Complicating this further, every session with an infant can be unique and thus without proper infrastructure will require extreme efforts in order to process them.
 

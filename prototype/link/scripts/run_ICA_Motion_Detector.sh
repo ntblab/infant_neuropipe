@@ -18,4 +18,4 @@ submit_jobs=$1
 ICA_Threshold=$2
 current_dir=$3
 
-matlab -nodesktop -nosplash -r "addpath $PROJ_DIR/subjects/$SUBJ/scripts/; ICA_Motion_Detector($submit_jobs, $ICA_Threshold, $current_dir); exit"
+matlab -nodesktop -nosplash -r "addpath $PROJ_DIR/prototype/link/scripts/; ICA_Motion_Detector($submit_jobs, $ICA_Threshold, $current_dir); exit"

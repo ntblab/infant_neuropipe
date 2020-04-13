@@ -1,0 +1,32 @@
+# Files to be ignored
+analysis/*
+archive/*
+group/*
+logs/*
+results/*
+scripts/Participant_Data.txt
+scripts/Gaze_Categorization/Coder_Files/*
+scripts/Gaze_Categorization/Coder_movies/*
+scripts/Gaze_Categorization/Analysed_Data/*
+scripts/Gaze_Categorization/Mat_Data/*
+scripts/Gaze_Categorization/Eye_Apertures/*
+scripts/Gaze_Categorization/Frames/*
+scripts/Gaze_Categorization/saved_demos/*
+subjects/*
+
+# Except these
+!analysis/report/.gitkeep
+!analysis/report.template
+!archive/.gitkeep
+!logs/.gitkeep
+!group/.gitkeep
+!group/atlases/.gitkeep
+!results/.gitkeep
+!subjects/.gitkeep
+!scripts/Gaze_Categorization/Coder_Files/.gitkeep
+!scripts/Gaze_Categorization/Coder_movies/.gitkeep
+!scripts/Gaze_Categorization/Analysed_Data/.gitkeep
+!scripts/Gaze_Categorization/Mat_Data/.gitkeep
+!scripts/Gaze_Categorization/Eye_Apertures/.gitkeep
+!scripts/Gaze_Categorization/Frames/.gitkeep
+!scripts/Gaze_Categorization/saved_demos/.gitkeep

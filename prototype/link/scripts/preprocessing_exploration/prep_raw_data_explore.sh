@@ -50,17 +50,9 @@ then
 	done
 fi
 
-# If the input to this function is that you are using just the default settings then only run these
-if [ $# -eq 2 ]
-then
-	PCA_Thresholds="0"
-	fslmotion_thresholds="3"
-	echo Only running default settings
-
-else
-	PCA_Thresholds="0.05 IQR 0"
-	fslmotion_thresholds="0.5 1 3 6 9 12"
-fi
+# Set the parameters to be explored
+PCA_Thresholds="0" # Can accept a p value or the string IQR
+fslmotion_thresholds="0.2 0.4 0.6 0.8 1.0 1.2 1.4 1.6 1.8 2.0 2.2 2.4 2.6 2.8 3.0 3.2 3.4 3.6 3.8 4.0 4.2 4.4 4.6 4.8 5.0 99 6 9 12"
 
 
 # Run the preprocessing so that you have the appropriate files, use different PCA thresholds
