@@ -21,9 +21,6 @@
 % retention rate if a stricter motion threshold was applied, akin to Deen
 % et al 2017.
 %
-% '$PROJ_DIR/scripts/temperament_corr_retention.m' if this is desired
-% functionality
-% 
 function ScanTimeAnalysis(participant_criteria, analysis_name)
 
 if nargin == 0
@@ -32,6 +29,8 @@ if nargin == 0
 end
 
 addpath scripts
+
+plot_non_scanner_time = 0; % Do you want to plot non-scanning time?
 
 % Hard code which blocks or runs should be categorized as sleeping
 sleeping_runs = {};
@@ -482,6 +481,13 @@ ppt_idxs=find(Included_participants==1);
 var_names = {'age', 'scan_date', 'scan_time', 'ppt_sex', 'scan_day'};
 vars = {age, scan_date, scan_time, ppt_sex, scan_day};
 
+% Plot the non-scanner time
+if plot_non_scanner_time == 1
+    y_max = 80;
+else
+    y_max = 50;
+end
+
 for var_counter = 1:length(vars)
     
     % Pull out variables
@@ -492,8 +498,11 @@ for var_counter = 1:length(vars)
     ordered_idxs.(var_name)=ppt_idxs(ordered);
     
     % Stack all of the data in the order specified
-    stacked_data.(var_name) = [Included_functional_duration(ordered_idxs.(var_name)), Asleep_duration(ordered_idxs.(var_name)), Anatomical_duration(ordered_idxs.(var_name)), Scout_duration(ordered_idxs.(var_name)), Motion_excluded_duration(ordered_idxs.(var_name)), Eye_excluded_duration(ordered_idxs.(var_name)), Ignored_block_duration(ordered_idxs.(var_name)), Ignored_run_duration(ordered_idxs.(var_name)), Not_scanning_duration(ordered_idxs.(var_name))];
-
+    if plot_non_scanner_time == 1
+        stacked_data.(var_name) = [Included_functional_duration(ordered_idxs.(var_name)), Asleep_duration(ordered_idxs.(var_name)), Anatomical_duration(ordered_idxs.(var_name)), Scout_duration(ordered_idxs.(var_name)), Motion_excluded_duration(ordered_idxs.(var_name)), Eye_excluded_duration(ordered_idxs.(var_name)), Ignored_block_duration(ordered_idxs.(var_name)), Ignored_run_duration(ordered_idxs.(var_name)), Not_scanning_duration(ordered_idxs.(var_name))];
+    else
+        stacked_data.(var_name) = [Included_functional_duration(ordered_idxs.(var_name)), Asleep_duration(ordered_idxs.(var_name)), Anatomical_duration(ordered_idxs.(var_name)), Scout_duration(ordered_idxs.(var_name)), Motion_excluded_duration(ordered_idxs.(var_name)), Eye_excluded_duration(ordered_idxs.(var_name)), Ignored_block_duration(ordered_idxs.(var_name)), Ignored_run_duration(ordered_idxs.(var_name))];
+    end
 end
 
 stacked_labels={'Included TRs',  'Asleep functional', 'Anatomical', 'Scouts',  'Motion TRs', 'Eye movement TRs', 'Ignored block', 'Ignored run', 'Not scanning'};
@@ -578,7 +587,7 @@ end
 legend(stacked_labels)
 set(gca, 'XTick', [1:length(ordered_idxs.age)], 'XTickLabel', participant_names(ordered_idxs.age))
 xtickangle(90);
-ylim([0, 80]);
+ylim([0, y_max]);
 ylabel('Minutes');
 saveas(gcf, sprintf('%s/bar_stacked.eps', output_dir),'epsc');
 saveas(gcf, sprintf('%s/bar_stacked.png', output_dir));
@@ -597,7 +606,7 @@ else
     set(gca, 'XTick', [1:length(ordered_idxs.age)], 'XTickLabel', ppt_id(ordered_idxs.age));
 end
 xtickangle(0);
-ylim([0, 80]);
+ylim([0, y_max]);
 saveas(gcf, sprintf('%s/bar_stacked_matched.eps', output_dir),'epsc');
 saveas(gcf, sprintf('%s/bar_stacked_matched.png', output_dir));
 saveas(gcf, sprintf('%s/bar_stacked_matched.fig', output_dir));
@@ -620,7 +629,7 @@ end
 legend(stacked_labels)
 set(gca, 'XTick', [1:length(ordered_idxs.scan_date)], 'XTickLabel', scan_date_str(ordered_idxs.scan_date))
 xtickangle(90);
-ylim([0, 80]);
+ylim([0, y_max]);
 ylabel('Minutes');
 saveas(gcf, sprintf('%s/bar_stacked_date.eps', output_dir),'epsc');
 saveas(gcf, sprintf('%s/bar_stacked_date.png', output_dir));
@@ -637,7 +646,7 @@ legend(stacked_labels)
 set(gca, 'XTick', [1:length(ordered_idxs.scan_time)], 'XTickLabel', scan_time_str(ordered_idxs.scan_time))
 xtickangle(90);
 ylabel('Minutes');
-ylim([0, 80]);
+ylim([0, y_max]);
 saveas(gcf, sprintf('%s/bar_stacked_time.eps', output_dir),'epsc');
 saveas(gcf, sprintf('%s/bar_stacked_time.png', output_dir));
 saveas(gcf, sprintf('%s/bar_stacked_time.fig', output_dir));
@@ -652,7 +661,7 @@ end
 legend(stacked_labels)
 set(gca, 'XTick', [1:length(ordered_idxs.ppt_sex)], 'XTickLabel', ppt_sex_str(ordered_idxs.ppt_sex))
 xtickangle(90);
-ylim([0, 80]);
+ylim([0, y_max]);
 ylabel('Minutes');
 saveas(gcf, sprintf('%s/bar_stacked_sex.eps', output_dir),'epsc');
 saveas(gcf, sprintf('%s/bar_stacked_sex.png', output_dir));
@@ -682,7 +691,7 @@ end
 legend(stacked_labels)
 set(gca, 'XTick', [1:length(ordered_idxs.scan_day)], 'XTickLabel', scan_day_str(ordered_idxs.scan_day))
 xtickangle(90);
-ylim([0, 80]);
+ylim([0, y_max]);
 ylabel('Minutes');
 saveas(gcf, sprintf('%s/bar_stacked_day.eps', output_dir),'epsc');
 saveas(gcf, sprintf('%s/bar_stacked_day.png', output_dir));

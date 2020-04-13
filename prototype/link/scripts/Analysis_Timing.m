@@ -394,7 +394,7 @@ while BlockCounter<=size(Data.Global.RunOrder,1)
     if BlockCounter<size(Data.Global.RunOrder,1)
         NextExperiment=Data.(Data.Global.RunOrder{BlockCounter+1,1}).(Data.Global.RunOrder{BlockCounter+1,2});
     else
-        NextExperiment.Timing.TR=[];
+        NextExperiment.Timing.TR=[]; 
     end
     
     % Raw data: what TRs really happened (versus those you interpolated)
@@ -609,7 +609,7 @@ while BlockCounter<=size(Data.Global.RunOrder,1)
         AnalysedData.(ExperimentName).(BlockName).block_TRs=block_TRs;
         
         [AnalysedData, PrintLog] = Timing_TR_Timecourse(AnalysedData, ExperimentName, BlockName, Functional_Counter, Timing_File_Struct, PrintLog);
-
+	
         %% Determine which events should be excluded because their eyes were closed
         % Set up a regressor which represents the activity of eyes being
         % closed or inappropriately positioned (e.g. off centre in
@@ -760,7 +760,11 @@ while BlockCounter<=size(Data.Global.RunOrder,1)
             
             % Set all the events to zero so that the timing file will make
             % the appropriate nuissance regressor file
-            Include_Events(:)=0;
+            if Motion_Exclude_Epoch==1
+                Include_Events(:, 2)=0; % This is the column for motion exclusion events
+            else
+                Include_Events(:)=0;
+            end
             
         end
         

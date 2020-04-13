@@ -16,12 +16,16 @@ if nargin==0
         % folder two above the subjects folder
         current_dir=pwd;
         
-        % Find the relevant features in the path
-        folder_idxs=strfind(current_dir, '/');
-        subject_idx=strfind(current_dir, 'subjects/');
-        
-        % Find the first slash after the 'subjects/'
-        globals_path=current_dir(1:folder_idxs(find(folder_idxs > subject_idx + 9)));
+	if strfind(current_dir, 'analysis') > 0
+		globals_path=current_dir(1:strfind(current_dir, 'analysis')-1);
+	else
+		% Find the relevant features in the path
+		folder_idxs=strfind(current_dir, '/');
+		subject_idx=strfind(current_dir, 'subjects/');
+		
+		% Find the first slash after the 'subjects/'
+		globals_path=current_dir(1:folder_idxs(find(folder_idxs > subject_idx + 9)));
+	end
     end
 end
 
