@@ -21,11 +21,6 @@
 % retention rate if a stricter motion threshold was applied, akin to Deen
 % et al 2017.
 %
-% This code also tries to run correlations of the data with temperament
-% data from the IBQR. Look at the script
-% '$PROJ_DIR/scripts/temperament_corr_retention.m' if this is desired
-% functionality
-% 
 function ScanTimeAnalysis(participant_criteria, analysis_name)
 
 if nargin == 0
@@ -915,9 +910,6 @@ fprintf('Second session > first session. M: %0.2f, t=%0.2f, p=%0.3f\n', mean(sec
 
 % Save all of the data
 save(sprintf('%s/summary.mat', output_dir));
-
-% Perform the temperament correlations
-temperament_corr_retention(sprintf('%s/summary.mat', output_dir));
 
 %Report summary results
 
