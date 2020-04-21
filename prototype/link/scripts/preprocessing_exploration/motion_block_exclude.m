@@ -52,7 +52,6 @@ if exist(eye_exclude_epoch_file) > 0
     end
 end
 
-
 %Find the columns with an exclusion
 confound_mat=confound_mat(:, sum(confound_mat==1, 1)>0);
 
@@ -78,17 +77,16 @@ end
 for block_counter=1:size(timing_mat,1)
 
     % Get the event times
-    block_onset = ceil(timing_mat(block_counter, 1) / TR);
-    block_onset(block_onset<=0)=1;
-    block_duration = ceil(timing_mat(block_counter, 2) / TR) + burnout_TR;
+    block_onset = ceil(timing_mat(block_counter, 1) / TR) + 1; % Make the 0th TR equal to 1
+    block_duration = ceil(timing_mat(block_counter, 2) / TR) + burnout_TR + 1; % Make it like how analysis timing computes the TR number
 
     % If the block duration is too long (there was no burn out, often happens with resting state) then shorten it
-    if block_onset+block_duration - 1 > size(confound_mat, 1)
+    if block_onset+block_duration > size(confound_mat, 1)
         block_duration = size(confound_mat, 1) - block_onset + 1;
     end
 
     % Find the TRs that are excluded
-    block_TRs=confound_mat(block_onset:block_onset+block_duration-1, :);
+    block_TRs=confound_mat(block_onset:block_onset+block_duration - 1, :);
     proportion_excluded = sum(block_TRs(:))/block_duration;
 
     % Set the weight to zero on a block that is excluded
