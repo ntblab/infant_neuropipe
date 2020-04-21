@@ -49,9 +49,10 @@ anatomical_file="${subject_dir}/analysis/secondlevel/highres_original.nii.gz"
 slice_dir=${exploration_path}/preprocessing_exploration/sliced/
 
 # Remove any files that may have been created before
-rm -f ${concat_dir}/concat*${condition}*
-rm -f ${ev_dir}/concat*${condition}*
-rm -f ${confound_dir}/concat*${condition}*
+rm -f ${concat_dir}/concat*${condition}.nii.gz
+rm -f ${concat_dir}/concat*${condition}_Z.nii.gz
+rm -f ${ev_dir}/concat*${condition}.txt
+rm -f ${confound_dir}/concat*${condition}.txt
 
 #Get all of the runs, some of which won't be usable
 run_names=`ls -d ${exploration_path}/preprocessing_exploration/functional*_${condition}_sliced.feat`
