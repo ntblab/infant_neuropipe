@@ -1,6 +1,7 @@
 # Files to be ignored
 analysis/*
 archive/*
+data/*
 group/*
 logs/*
 results/*
@@ -18,6 +19,7 @@ subjects/*
 !analysis/report/.gitkeep
 !analysis/report.template
 !archive/.gitkeep
+!data/.gitkeep
 !logs/.gitkeep
 !group/.gitkeep
 !group/atlases/.gitkeep
