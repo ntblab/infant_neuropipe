@@ -69,6 +69,9 @@ if nargin < 2
     SecondLevelAnalysisName = FirstLevelAnalysisName;
 end
 
+% Output analysis types
+fprintf('\nUsing data from %s, putting data in %s\n\n', FirstLevelAnalysisName, SecondLevelAnalysisName);
+
 delete(sprintf('analysis/secondlevel/FunctionalSplitter_%s_Log', SecondLevelAnalysisName)); % Delete file
 diary(sprintf('analysis/secondlevel/FunctionalSplitter_%s_Log', SecondLevelAnalysisName)); %Start a log file
 addpath('scripts/FunctionalSplitter_functions');
@@ -271,6 +274,16 @@ fprintf('#################\n');
 %Report the inputs
 fprintf('\n########################################\n\nLooking for the files in %s of the secondlevel folder\n\n', SecondLevelAnalysisName);
 
+% First, check if this secondlevel analysis folder exists, or if maybe this wasn't created for some reason; exit if so
+secondlevel_analysis_folder=[secondlevel_dir,FirstLevelAnalysisName];
+
+if ~exist(secondlevel_analysis_folder)
+	fprintf('WARNING: The secondlevel analysis folder %s does not exist. Check that you gave the right inputs to this script and/or that Post-Prestats.sh has been run properly. Aborting.\n\n',FirstLevelAnalysisName)
+	return
+end
+
+
+
 %Remove all the files in the folders you have created with these parameters
 try
     Directory=dir([OutputPrefix,'*']);
@@ -343,6 +356,7 @@ for functional_run = functional_runs
     else
         aligned_folder = sprintf('%s/%s_%s.feat/aligned_highres/', InputDir, functional_run, FirstLevelAnalysisName);
     end
+
     
     Functional_Name=sprintf('%s/func2highres_unmasked.nii.gz', aligned_folder);
     
@@ -775,3 +789,5 @@ fclose('all');
 
 %delete Temp/
 diary off % Turn the diary function off
+
+fprintf('\nFinished\n');
