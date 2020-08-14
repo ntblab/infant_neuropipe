@@ -8,3 +8,6 @@ Bug fixes for Analysis_Timing and Pseudorun splitting that affect edge cases lik
 
 ## V_1.2
 Fixed an error in the registration fsf template that was making unnecessarily smooth data. Also add some quality of life improvements for FunctionalSplitter. Also added a script for converting pial surfaces (from FreeSurfer) into stl files which is useful for 3d printing
+
+## V_1.2_SL
+Version 1.2 of infant neuropipe, but with additional scripts for running the Statistical Learning analyses
