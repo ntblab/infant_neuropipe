@@ -92,7 +92,7 @@ def segment_data(segmentation_name, functional_name, mask_name=None, bilateral_m
     if mask.sum() > 0:
         segmentation *= mask == 1
     
-    # If this is anterior then use these other ROIs, otherwise use the normal labels
+    # If this is anterior then use these other ROIs, otherwise use the normal labels. This can be confusing but remember the labels for posterior sections of the hippocampus are labelled 5 and 6, and those are also the labels for the whole hippocampus
     if posterior_anterior == 1:
         roi_labels = [3, 4, 7, 8]
     else:
@@ -127,9 +127,7 @@ def segment_data(segmentation_name, functional_name, mask_name=None, bilateral_m
 # Determine where the data is stored
 base_dir = './infant_neuropipe'
 data_dir = '%s/data/StatLearning/' % base_dir
-base_dir = '/gpfs/milgram/project/turk-browne/projects/dev_neuropipe/'
-data_dir = '%s/data/StatLearning/' % base_dir
-    
+
 # Use only the masks from this coder
 Coder = 'CE'
 
