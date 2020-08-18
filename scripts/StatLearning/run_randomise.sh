@@ -11,7 +11,7 @@
 # Setup the environment.
 source ./globals.sh
 
-contrast_name=$1 # For instance "1". If -1 then assumes this is a multivariate analysis
+contrast_name=$1 # For instance "zstat1". If -1 then assumes this is a multivariate analysis
 secondlevelname=$2 # For instance "seen_count"
 
 # Assume data directory is where it should be
