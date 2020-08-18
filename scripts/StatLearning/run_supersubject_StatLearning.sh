@@ -11,7 +11,7 @@
 # Load in the appropriate environment
 source ./globals.sh
 
-input_seed=$1 # What is the path to the input nifti data
+input_seed=$1 # What is the input seed used in the randomizer for picking participants
 ppt_condition=$2 # What is the participant condition being used
 posterior_anterior=$3 # Do you want to subsample the ROI (-1 posterior, 0 all, 1 anterior)
 bilateral_masks=$4 # Do you want to collapse bilaterally (0 no, 1 yes)
