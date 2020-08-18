@@ -81,8 +81,8 @@ analysis_types="Interaction${name_suffix} Block_regressor${name_suffix}"
 
 ## Make all the timing files
 
-# Cycle through the analysis types
-for analysis_type in half1 half2 Block_regressor
+# Cycle through the timing file types you need that haven't been created yet
+for timing_file_type in half1 half2 Block_regressor
 do
 
     # Cycle through the conditions
@@ -90,24 +90,24 @@ do
     do
 
         input=${statlearning_path}/Timing/StatLearning-${Condition}_Only.txt
-        output=${statlearning_path}/Timing/StatLearning-${Condition}_${analysis_type}${name_suffix}.txt
+        output=${statlearning_path}/Timing/StatLearning-${Condition}_${timing_file_type}${name_suffix}.txt
 
         if [[ $is_seen_order == 0 ]]
         then
 
             # Set up the values and columns to be changes
             blocks=`cat $input | wc -l`
-            if [[ ${analysis_type} == Slope ]]
+            if [[ ${timing_file_type} == Slope ]]
             then
                 column=3
                 value=slope		
 
-            elif [[ ${analysis_type} == FIR ]]
+            elif [[ ${timing_file_type} == FIR ]]
             then
                 column=2
                 value=1
 
-            elif [[ ${analysis_type} == half1 ]]
+            elif [[ ${timing_file_type} == half1 ]]
             then
 
                 column=3
@@ -126,7 +126,7 @@ do
                     fi	
                 done	
                 value="${value}]"	
-            elif [[ ${analysis_type} == half2 ]]
+            elif [[ ${timing_file_type} == half2 ]]
             then
 
                 column=3
@@ -147,7 +147,7 @@ do
                 done
                 value="${value}]"	
 
-            elif [[ ${analysis_type} == Intercept-exclude ]]
+            elif [[ ${timing_file_type} == Intercept-exclude ]]
             then
 
                 column=3
