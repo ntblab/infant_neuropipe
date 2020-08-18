@@ -508,7 +508,7 @@ set fmri(ftest_real3.1) 0
 set fmri(conpic_real.2) 1
 
 # Title for contrast_real 2
-set fmri(conname_real.2) "Second vs Second"
+set fmri(conname_real.2) "Second half vs First half"
 
 # Real contrast_real vector 2 element 1
 set fmri(con_real2.1) -1
