@@ -1,5 +1,7 @@
 # Development project analysis pipeline
-## V_1.2
+## V_1.3
+
+### Refer to the associated [publication](https://www.nature.com/articles/s41467-020-18286-y) for additional details: Ellis, C. T., Skalaban, L. J., Yates, T. S., Bejjanki, V. R., Córdova, N. I., & Turk-Browne, N. B. (2020). Re-imagining fMRI for awake behaving infants. Nature Communications, 11(1), 1-12.
 
 Although substantial advances have been made in analyzing adult fMRI data using automated pipelines (e.g., HCP, fmriprep) these procedures typically do not work with infant fMRI data. Infants have small brains which mean that alignment to standard is difficult and they have different motion properties which means adult protocols for dealing with motion are inappropriate. Complicating this further, every session with an infant can be unique and thus without proper infrastructure will require extreme efforts in order to process them.
 
