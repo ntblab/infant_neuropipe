@@ -14,8 +14,14 @@ then
 lower_thr=1
 upper_thr=100000 # Just pick a large number
 else
+if [ "$#" -eq 3 ]
+then
 lower_thr=$3
 upper_thr=$3
+else
+lower_thr=$3
+upper_thr=$4
+fi
 fi
 
 # Create file names
