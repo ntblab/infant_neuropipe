@@ -1,0 +1,81 @@
+<HTML><HEAD>
+<style>
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 49%;
+}
+</style>
+
+<h2>iBEAT QC</h2>
+<!--poststatspsstart-->
+<hr><p>Using the freesurfer directory: <?= $FS_DIR ?>
+<!--poststatspsstop-->
+
+<!--poststatspicsstart-->
+
+<p><b>sulc</b>
+<br>
+<div class="column">
+<IMG BORDER=0 SRC=<?= $FS_DIR ?>/screenshots/surface.inferior.png style="width:32%">
+<IMG BORDER=0 SRC=<?= $FS_DIR ?>/screenshots/surface.medial.png style="width:32%">
+<IMG BORDER=0 SRC=<?= $FS_DIR ?>/screenshots/surface.superior.png style="width:32%">
+</div> 
+
+<br>
+<p><b>sulc</b>
+<br>
+<div class="row">
+<div class="column">
+<IMG BORDER=0 SRC=<?= $FS_DIR ?>/screenshots/lh.lateral.sulc.png style="width:49%">
+<IMG BORDER=0 SRC=<?= $FS_DIR ?>/screenshots/rh.lateral.sulc.png style="width:49%">
+</div>  
+<div class="column">
+<IMG BORDER=0 SRC=<?= $FS_DIR ?>/screenshots/lh.medial.sulc.png style="width:49%">
+<IMG BORDER=0 SRC=<?= $FS_DIR ?>/screenshots/rh.medial.sulc.png style="width:49%">
+</div>  
+</div>  
+
+<br>
+<p><b>jacobian.medial</b>
+<br>
+<div class="column">
+<IMG BORDER=0 SRC=<?= $FS_DIR ?>/screenshots/lh.jacobian.medial.png style="width:49%">
+<IMG BORDER=0 SRC=<?= $FS_DIR ?>/screenshots/rh.jacobian.medial.png style="width:49%">
+</div>  
+
+
+<p><b>jacobian.lateral</b>
+<br>
+<div class="column">
+<IMG BORDER=0 SRC=<?= $FS_DIR ?>/screenshots/lh.jacobian.lateral.png style="width:49%">
+<IMG BORDER=0 SRC=<?= $FS_DIR ?>/screenshots/rh.jacobian.lateral.png style="width:49%">
+</div>  
+
+<br>
+<p><b>desikan.lateral</b>
+<br>
+<IMG BORDER=0 SRC=<?= $FS_DIR ?>/screenshots/desikan.superior.png style="width:49%" class="center">
+<div class="row">
+<div class="column">
+<IMG BORDER=0 SRC=<?= $FS_DIR ?>/screenshots/lh.desikan.lateral.png style="width:49%">
+<IMG BORDER=0 SRC=<?= $FS_DIR ?>/screenshots/rh.desikan.lateral.png style="width:49%">
+</div>  
+</div>  
+<IMG BORDER=0 SRC=<?= $FS_DIR ?>/screenshots/desikan.inferior.png style="width:49%" class="center">
+
+<p><b>desikan.medial</b>
+<br>
+<div class="column">
+<IMG BORDER=0 SRC=<?= $FS_DIR ?>/screenshots/lh.desikan.medial.png style="width:49%">
+<IMG BORDER=0 SRC=<?= $FS_DIR ?>/screenshots/rh.desikan.medial.png style="width:49%">
+</div>  
+
+
+<!--poststatspicsstop-->
+<!--poststatstsplotstart-->
+<!--poststatstsplotstop-->
+
+</BODY></HTML>
+

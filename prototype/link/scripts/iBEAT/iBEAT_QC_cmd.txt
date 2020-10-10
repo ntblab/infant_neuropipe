@@ -1,0 +1,32 @@
+freeview -f surf/lh.white:overlay=surf/lh.jacobian_white:overlay_threshold=0,3
+freeview --viewport 3d
+freeview -zoom 1.25 --screenshot screenshots/lh.jacobian.lateral.png
+freeview -cam Azimuth 180 --screenshot screenshots/lh.jacobian.medial.png
+freeview -unload surface
+freeview -f surf/rh.white:overlay=surf/rh.jacobian_white:overlay_threshold=0,3
+freeview -zoom 1.25 --screenshot screenshots/rh.jacobian.medial.png
+freeview -cam Azimuth 180 --screenshot screenshots/rh.jacobian.lateral.png
+freeview -unload surface
+freeview -f surf/lh.pial:annot=label/lh.aparc.annot
+freeview -zoom 1.25 --screenshot screenshots/lh.desikan.lateral.png
+freeview -cam Azimuth 180 --screenshot screenshots/lh.desikan.medial.png
+freeview -unload surface
+freeview -f surf/rh.pial:annot=label/rh.aparc.annot
+freeview -zoom 1.25 --screenshot screenshots/rh.desikan.medial.png
+freeview -cam Azimuth 180 --screenshot screenshots/rh.desikan.lateral.png
+freeview -f surf/lh.pial:annot=label/lh.aparc.annot
+freeview -zoom 0.8 -ras 0 0 0
+freeview -cam Elevation 90
+freeview --screenshot screenshots/desikan.superior.png
+freeview -cam Elevation 180
+freeview --screenshot screenshots/desikan.inferior.png
+freeview -unload surface
+freeview -unload surface
+freeview -f surf/lh.sphere.32k_fs_LR.surf.gii:overlay=surf/lh.sulc.32k_fs_LR.func.gii
+freeview --screenshot screenshots/lh.lateral.sulc.png
+freeview -cam Azimuth 180 --screenshot screenshots/lh.medial.sulc.png
+freeview -unload surface
+freeview -f surf/rh.sphere.32k_fs_LR.surf.gii:overlay=surf/rh.sulc.32k_fs_LR.func.gii
+freeview --screenshot screenshots/rh.medial.sulc.png
+freeview -cam Azimuth 180 --screenshot screenshots/rh.lateral.sulc.png
+freeview -quit
