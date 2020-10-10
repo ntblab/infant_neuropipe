@@ -452,6 +452,33 @@ def summarise_secondlevel():
         # Show the interactive viewer for standard and highres
         fig=plotting.view_img(highres,bg_img=standard,opacity=0.4)
         
+        #highres = nibabel.load(highres_file).get_data()
+        #standard = nibabel.load(standard_file).get_data()
+        
+        # Set the range 
+        #highres /= highres.max()
+        #standard = np.divide(standard, standard.max())
+        
+        # Get slice idxs
+        #saggital_idx = highres.shape[0] // 2
+        #coronal_idx = highres.shape[1] // 2
+        #axial_idx = highres.shape[2] // 2
+
+        #plt.figure(figsize=(10,5))
+        #plt.subplot(1, 3, 1)
+        #highres_slice = np.squeeze(highres[saggital_idx, :, :])
+        #standard_slice = np.squeeze(standard[saggital_idx, :, :])
+        #overlay_slices(standard_slice, highres_slice)
+
+        #plt.subplot(1, 3, 2)
+        #highres_slice = np.squeeze(highres[:, coronal_idx, :])
+        #standard_slice = np.squeeze(standard[:, coronal_idx, :])
+        #overlay_slices(standard_slice, highres_slice)
+
+        #plt.subplot(1, 3, 3)
+        #highres_slice = np.squeeze(highres[:, :, axial_idx])
+        #standard_slice = np.squeeze(standard[:, :, axial_idx])        
+        #overlay_slices(standard_slice, highres_slice)
     else:
         # Set to nothing
         fig=[]
@@ -502,7 +529,7 @@ def summarise_secondlevel():
         print('%s doesn''t exist' % stacked_data_name)
             
 
-    print('\n\nReturning an interactive view of the registration from high res to standard for double-checking. If you want to do this for any of the functional to highres registrations, run this block of code (substitute func_run): \n\nimport nibabel as nib \nfunc_run="01a" #which functional? \nfunc=nib.load("analysis/firstlevel/functional%s.feat/reg/example_func.nii.gz" % func_run)\nhighres=nib.load("analysis/firstlevel/functional%s.feat/reg/highres2example_func.nii.gz" % func_run) \nplotting.view_img(func,bg_img=highres,opacity=0.4)')
+    print('\n\nReturning an interactive view of the registration from high res to standard for double-checking. If you want to do this for any of the functional to highres registrations, run this block of code (substitute func_run): \n\nimport nibabel as nib \nfrom nilearn import image \nfunc_run="01a" #which functional? \nfunc=nib.load("analysis/firstlevel/functional%s.feat/reg/example_func.nii.gz" % func_run)\nhighres=nib.load("analysis/firstlevel/functional%s.feat/reg/highres2example_func.nii.gz" % func_run) \nplotting.view_img(func,bg_img=highres,opacity=0.4)')
           
     return fig
 
