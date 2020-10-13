@@ -502,7 +502,7 @@ def summarise_secondlevel():
         print('%s doesn''t exist' % stacked_data_name)
             
 
-    print('\n\nReturning an interactive view of the registration from high res to standard for double-checking. If you want to do this for any of the functional to highres registrations, run this block of code (substitute func_run): \n\nimport nibabel as nib \nfunc_run="01a" #which functional? \nfunc=nib.load("analysis/firstlevel/functional%s.feat/reg/example_func.nii.gz" % func_run)\nhighres=nib.load("analysis/firstlevel/functional%s.feat/reg/highres2example_func.nii.gz" % func_run) \nplotting.view_img(func,bg_img=highres,opacity=0.4)')
+    print('\n\nReturning an interactive view of the registration from high res to standard for double-checking. If you want to do this for any of the functional to highres registrations, run this block of code (substitute func_run): \n\nimport nibabel as nib \nfrom nilearn import image \nfunc_run="01a" #which functional? \nfunc=nib.load("analysis/firstlevel/functional%s.feat/reg/example_func.nii.gz" % func_run)\nhighres=nib.load("analysis/firstlevel/functional%s.feat/reg/highres2example_func.nii.gz" % func_run) \nplotting.view_img(func,bg_img=highres,opacity=0.4)')
           
     return fig
 

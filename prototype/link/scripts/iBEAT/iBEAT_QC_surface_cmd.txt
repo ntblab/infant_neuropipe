@@ -1,0 +1,6 @@
+freeview -v mri/T1.mgz -f surf/lh.orig:edgecolor=yellow:edgethickness=1 surf/lh.pial:edgecolor=red:edgethickness=1 surf/rh.orig:edgecolor=yellow:edgethickness=1 surf/rh.pial:edgecolor=red:edgethickness=1
+freeview -zoom 1.5 -viewport axial -ras 0 0 0 --screenshot screenshots/surface.medial.png
+freeview -ras 0 0 -10 --screenshot screenshots/surface.inferior.png
+freeview -ras 0 0 10 --screenshot screenshots/surface.superior.png
+freeview -quit
+
