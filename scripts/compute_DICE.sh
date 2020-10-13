@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Compute the DICE similarity for two volumes. If a number is provided it will only consider that subfield for computing the similarity.
+# Compute the DICE similarity for two volumes. If a single number is provided as a third argument it will only consider that subfield for computing the similarity. If you provide a number as a fourth argument then the third and fourth arguments will be used as a range of values to consider.
 # Example command:
 # ./scripts/compute_DICE.sh group/MTL_practice/sub-02_t2_avg_brain-CE.nii.gz group/MTL_practice/sub-02_t2_avg_brain-BS.nii.gz 2
 
