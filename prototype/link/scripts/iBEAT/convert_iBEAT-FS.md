@@ -16,6 +16,8 @@ You should run these scripts from the participant directory
 
 0. Set some parameters
 
+Set some parameters to use in subsequent steps. You need a variable that defines a completed freesurfer pipeline to use as a reference. You also need to set as a path the directory to the iBEAT folder you want to analyze. Below are some default names:
+
 FREESURFER_NAME=petra01_brain
 fs_dir=analysis/freesurfer/iBEAT/
 
@@ -50,7 +52,7 @@ These should all be aligned and overlaid. If these are aligned then do the follo
 cp ${fs_dir}/raw/${SUBJ}-T1w.nii ${fs_dir}/raw/${SUBJ}-T1w_aligned.nii
 gzip ${fs_dir}/raw/${SUBJ}-T1w_aligned.nii
 
-If these are misaligned it is usually because the dimensionality is flipped. You can use fslswapdim to fix it and flirt. 
+If these are misaligned it is usually because the dimensionality is flipped. You can use fslswapdim to fix it. Flirt could be used to make translational changes manually, for instance sometimes the volume is shifted one FOV width to the left. 
 
 For instance a common error will be that they are left/right flipped which can be fixed by doing:
 fslswapdim $input x -y z $output
@@ -60,7 +62,7 @@ ${SUBJ}-T1w_aligned.nii.gz
 
 
 4. With the directory created, now make inflations and spheres on each hemisphere separately.
-This script takes 60-90min to run so don't wait for it 
+This script takes 60-90min to run. 
 
 sbatch scripts/iBEAT/iBEAT_inflate_sphere.sh lh
 sbatch scripts/iBEAT/iBEAT_inflate_sphere.sh rh
@@ -89,6 +91,8 @@ wb_command -cifti-create-dense-scalar ${fs_dir}/surf/func2highres.dscalar.nii \
 
 
 5. Run the QC.
-Run the files needed for the Enigma consortium QC. This creates an html file that can be used to check the surfaces on the anatomical image and checks for defects in the labelling of different gyri. To run this, use the following call to an interactive session:
+Once step 4 has finished, run the files needed for the Enigma consortium QC. This creates an html file that can be used to check the surfaces on the anatomical image and checks for defects in the labelling of different gyri. To run this, use the following call to an interactive session:
 
 srun --x11 --pty ./scripts/iBEAT/iBEAT_QC.sh analysis/freesurfer/iBEAT/
+
+Once this has been run, it will produce an HTML file that is stored in the in the iBEAT directory and can be viewed at any time with something like firefox
