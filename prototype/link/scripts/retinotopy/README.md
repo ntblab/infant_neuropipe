@@ -105,7 +105,7 @@ To know where vV4 is, look for the collateral sulcus on the uninflated surface a
 Often there is a blob anterior to ventral V4 that is sensitive to horizontal that should be ignored and drawn around
 
 
-8. Tke efficient screenshots of the regions
+8. Take efficient screenshots of the regions
 
 Make 1D files that can be used to take pictures of individual hemispheres of the data. In particular, this makes a 1D file with functional data (e.g., SF or meridian) and the traced regions in a single data file that can be loaded on the brain
 
@@ -132,5 +132,7 @@ There are two types of lines to draw, ones that are perpendicular to the region 
 
 The parallel lines also need to be drawn using a similar procedure except that the lines will start from the medial/foveal edge and emanate laterally. Two lines should be drawn per region, approximately dividing the region into 3 equally sized slices, and each line will be labeled with the appropriate region name (e.g. vV1) and have an intensity of 1. This will again be done separately for left and right, as well as dorsal and ventral regions These files should be saved as: `{dorsal_or_ventral}${hemi}.ortho_lines`
 
+10. Align the convexity files to standard
 
+This step is needed to evaluate the quality of the alignment to standard. Use the command `sbatch scripts/retinotopy/generate_std_conv.sh iBEAT` to align the participant's convexity file (stored in `iBEAT/scratch/`) to standard space and prepare it for analysis
 
