@@ -2,7 +2,7 @@
 #
 # Create convexity files in standard space. Assumes that the SUMA folder has been created for the participant. 
 #
-# This uses the convexity files are in a scratch folder. This step is done automatically by the iBEAT preprocessing pipeline in infant_neuropipe. To make the 1d conv files (should be made already) use: SurfaceMetrics -conv -i_fs ${fs_dir}/surf/rh.orig -prefix ${fs_dir}/scratch/rh
+# This uses the convexity files are in a scratch folder. This step is done automatically by the iBEAT preprocessing pipeline in infant_neuropipe. If it hasn't already been made use: SurfaceMetrics -conv -i_fs ${fs_dir}/surf/rh.orig -prefix ${fs_dir}/scratch/rh
 
 #SBATCH --output=logs/generate_std_conv-%j.out
 #SBATCH -p short
