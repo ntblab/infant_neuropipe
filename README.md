@@ -4,7 +4,7 @@
 -----------------------------------------
 
 Branch for code associated with manuscript:
-Ellis, Skalaban, Yates, Bejjanki, Cordova, & Turk-Browne (in prep). *How to read a baby's mind: Redesigning fMRI for awake, behaving infants*.
+Ellis, C. T., Skalaban, L. J., Yates, T. S., Bejjanki, V. R., Córdova, N. I., & Turk-Browne, N. B. (2020). Re-imagining fMRI for awake behaving infants. *Nature Communications, 11*, 4523. 
 
 Read scripts/preprocessing_exploration/README.md to get oriented
 
