@@ -9,6 +9,8 @@
 # Don't quit at any error since there is often a copy error with the highres
 # set -ue
 #
+# This script defaults to use the ANTs registration to standard as a default. If it doesn't find it then it will crash. If you would like it to use the manual registration then set this input argument to 0. If you want it to use ANTs first but manual if not supplied then set this to -1
+#
 #SBATCH --output=logs/align_stats-%j.out
 #SBATCH -p short
 #SBATCH -t 30
@@ -18,6 +20,7 @@
 stat_maps=$1
 zmin=$2
 zmax=$3
+use_ants=$4 # Do you want to use ANTs for registration to standard (1), manual (0) or either in that order (-1)
 
 # Source globals
 source ./globals.sh
@@ -26,6 +29,7 @@ if [ $# -eq 1 ]
 then
 	zmin=2.3
 	zmax=3
+	use_ants=1 
 fi
 
 # What experiment does this stat map belong to?
@@ -34,6 +38,12 @@ Experiment=`echo ${stat_maps#*secondlevel_} | sed 's/\/.*//'`
 # Preset files
 highres_reg_folder=analysis/secondlevel/registration.feat/reg/
 mask=analysis/secondlevel/default/mask_${Experiment}.nii.gz
+
+# Get path to FSL standard directory
+fsl_data=`which fsl`
+fsl_data=${fsl_data%bin*}
+fsl_data=$fsl_data/data/standard/
+adult_standard=$fsl_data/MNI152_T1_1mm.nii.gz
 
 if [ ! -e $mask ]
 then
@@ -100,8 +110,31 @@ do
 	echo "Created $image_highres"
 	
 	# Register to standard space
-	
-	flirt -in $functional -applyxfm -init ${highres_reg_folder}/example_func2standard.mat -out $registered_standard -ref ${highres_reg_folder}/standard.nii.gz
+	ants_dir=analysis/secondlevel/registration_ANTs/
+	standard_vol=`./scripts/age_to_standard.sh` # Get the standard volime
+	if [ -e $ants_dir/highres2standard.nii.gz ] && [ $use_ants -ne 0 ]
+	then
+		echo Using ANTs for alignment to standard
+
+		# If you want to use ANTs and can, do it here
+		antsApplyTransforms -d 3 -i $registered_highres -o ${functional%.nii.gz}_tmp.nii.gz -r $standard_vol -t $ants_dir/highres2infant_standard_1Warp.nii.gz -t $ants_dir/highres2infant_standard_0GenericAffine.mat
+
+		flirt -in ${functional%.nii.gz}_tmp.nii.gz -ref $adult_standard -init $ants_dir/infant_standard2standard.mat -applyxfm -o $registered_standard
+
+		# Remove file for alignment to infant standard
+		rm -f ${functional%.nii.gz}_tmp.nii.gz
+	else
+
+		if [ $use_ants -eq 1 ]
+		then
+			# Quit if you failed to find the file
+			echo "Couldn''t find ANTs directory, quitting"
+			exit
+		else
+			echo Using manual registration for alignment to standard
+			flirt -in $functional -applyxfm -init ${highres_reg_folder}/example_func2standard.mat -out $registered_standard -ref ${highres_reg_folder}/standard.nii.gz
+		fi
+	fi
 	echo "Registered $registered_standard"
 	
 	#Overlay the maps
@@ -113,3 +146,5 @@ do
 	slicer $overlay_standard -a $image_standard
 	
 done
+
+echo Finished

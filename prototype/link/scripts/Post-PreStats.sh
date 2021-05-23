@@ -68,7 +68,7 @@
 # Shifted the focus to be on firstlevel, rather than on the concatenated secondlevel, C Ellis 3/3/19
 #
 #SBATCH --output=./logs/Post-PreStats-%j.out
-#SBATCH -p short
+#SBATCH -p psych_day
 #SBATCH -t 300
 #SBATCH --mem 20G
 
@@ -111,6 +111,12 @@ rm -f $REGCONCAT_DIR/Confounds/OverallConfounds*.txt
 
 #Find the  feat directories
 FeatFolders=`ls -d $PRESTATS_DIR/functional*${analysis_type}.feat`
+
+# Get the global standard
+fsl_data=`which fsl`
+fsl_data=${fsl_data%bin*}
+fsl_data=$fsl_data/data/standard/
+GLOBAL_STANDARD=$fsl_data/MNI152_T1_1mm.nii.gz
 
 # If no analysis_type is specified but there are other analysis types in the folder then you need to remove them from this list
 if [[ $analysis_type == '' ]]
@@ -314,7 +320,8 @@ echo Functional all
 # Run the registration script to align to second level
 if [ ! -e analysis/secondlevel/registration.feat/ ]
 then
-    ./scripts/register_secondlevel.sh
+    # Refit the standard to be the global standard
+    ./scripts/register_secondlevel.sh $GLOBAL_STANDARD
 fi
 
 echo \#\#\#\# FINISHED \#\#\#
