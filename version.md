@@ -11,3 +11,6 @@ Fixed an error in the registration fsf template that was making unnecessarily sm
 
 ## V_1.3
 Added support for iBEAT and added the citation for the methods paper
+
+## V_1.4
+Added support for nonlinear alignment via ANTS and updated the tutorial
