@@ -2,7 +2,7 @@
 #
 # Align a secondlevel functional to standard space. It takes as input the name of the functional to register which is aligned to highres although may be in native resolution, and optionally, an output filename and whether to use ANTs for registration. Assumed to run in the participant folder 
 #
-# e.g., sbatch ./scripts/align_functionals.sh analysis/secondlevel_MM/default/NIFTI/MM-Full_Pilot_NoAudio_Z.nii.gz group/MM_Pilot/input_standard_nii/default/${SUBJ}_Z_registered_standard.nii.gz 1
+# e.g., sbatch ./scripts/align_functionals.sh analysis/secondlevel_MM/default/NIFTI/MM-Full_Pilot_NoAudio_Z.nii.gz data/Movies/Aeronaut/preprocessed_standard/nonlinear_alignment/${SUBJ}_Z_registered_standard.nii.gz 1
 #
 #
 # This script defaults to use the ANTs registration to standard as a default. If it doesn't find it then it will crash. If you would like it to use the manual registration then set this input argument to 0. If you want it to use ANTs first but manual if not supplied then set this to -1
@@ -17,6 +17,12 @@
 input_func=$1 # input functional image
 output_func=$2 # output name (optional)
 use_ants=$3 # Do you want to use ANTs for registration to standard (1), manual (0) or either in that order (-1)
+
+# Default to run ANTs
+if [ $# -eq 2 ]
+then
+        use_ants=1
+fi
 
 # Source globals
 source ./globals.sh
@@ -91,26 +97,11 @@ then
 		
                 merge_str="${merge_str} $tmp_dir/${timepoint}_reg.nii.gz"
 
-		# Add the registered func to the output
-		#if [[ $timepoint == 0 ]]
-		#then
-		#	fslmerge -t $tmp_dir/temp_merged.nii.gz $tmp_dir/${timepoint}_reg.nii.gz 
-		#else
-		#	fslmerge -t $tmp_dir/temp_merged.nii.gz $tmp_dir/temp_merged.nii.gz $tmp_dir/${timepoint}_reg.nii.gz
-		#fi
 	done
 	
         # Merge the time points (also print a string so that it is inspectable)
         echo fslmerge -t $output_func $merge_str
         fslmerge -t $output_func $merge_str
-
-	# Copy from the temp file to the output
-	#scp $tmp_dir/temp_merged.nii.gz $output_func
-
-	# echo "Rebuilding the functional"
-	# Put them all together now 
-	# registered_timepoints=`ls $tmp_dir/*reg*`
-	# fslmerge -t $output_func $registered_timepoints
 
 	# Remove the temp directory
 	rm -rf $tmp_dir

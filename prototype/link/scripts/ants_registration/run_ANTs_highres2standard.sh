@@ -68,7 +68,7 @@ then
 	# Look at the volumes to compare fit
 	fslview $ref_vol ${fs_vol}
 
-	printf "\nWas that alignment correct? If not press ctrl + C now to quit, otherwise wait 10s\n"
+	printf "\nDoes the mask look correct (i.e., the borders line up precisely with the brain). Note, in our infant data this is good enough only a third of the time? If not press ctrl + C now to quit, otherwise wait 10s\n"
 	echo "If you want to edit it, you can use the alignment you have to make a mask: fslmaths ${fs_vol} -thr 0 -bin $mask_vol; Now make the manual edits. Then do to make the final version: fslmaths $ref_vol -mas $mask_vol $aligned_vol;"
 	sleep 10s
 
