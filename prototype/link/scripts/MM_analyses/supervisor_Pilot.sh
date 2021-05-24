@@ -31,7 +31,7 @@ source globals.sh
 
 # What is the name of movie you care about?
 movie="MM-Full_Pilot_NoAudio_"
-movie_out_name='Aeronaut_DONT_SHARE' # Aeronaut, temporarily named so we don't overwrite files 
+movie_out_name='Aeronaut' # Aeronaut is a simpler name we use in manuscripts to avoid confusion over the word pilot
 nTRs=93
 
 
@@ -60,14 +60,16 @@ do
 
 	if [ $counter -eq 1 ] 
 	then		
-        file_name=${SUBJ}_Z.nii.gz
+        	file_name=${SUBJ}_Z.nii.gz
 	else
-        file_name=${SUBJ}_viewing_${counter}_Z.nii.gz
+        	file_name=${SUBJ}_viewing_${counter}_Z.nii.gz
 	fi
     
-    zscored_str="'${MM_path}/NIFTI/${file_name}'"
+    	zscored_str="'${MM_path}/NIFTI/${file_name}'"
 
-    ###### Step 1 - zscore while excluding NaNs
+    	###### Step 1 - zscore while excluding NaNs
+	# This was done for all movies played within the same functional run in an earlier preprocessing step, but here we want to make sure to only z-score within the movie of interest
+
 	# Find out what functional and block number the movie was run in
 	temp=${nifti##*$movie}
 	FuncBlock=${temp%.nii.gz}
@@ -86,7 +88,7 @@ do
 	matlab -nodesktop -nosplash -nodisplay -jvm -r "addpath('scripts/'); z_score_exclude($nifti_str, $zscored_str, $exclusions);"
 	
     
-    # Check if finished
+        # Check if finished
 	waiting=1
 	while [[ $waiting -eq 1 ]] 
 	do 
@@ -113,7 +115,7 @@ do
 
     
     ###### Step 2 align the data
-
+    # use alignment created earlier in preprocessing
     input_func=$group_dir/preprocessed_native/$preprocessing_type/${file_name}
     output_std=$group_dir/preprocessed_standard/$preprocessing_type/${file_name}
     transformation_matrix=${subject_dir}/analysis/secondlevel/registration.feat/reg/example_func2standard.mat
@@ -136,7 +138,7 @@ do
     fi
 
 
-    # Check if alignment is done
+       # Check if alignment is done
 	waiting=1
 	while [[ $waiting -eq 1 ]] 
 	do 
@@ -148,13 +150,17 @@ do
 		fi
 	done
     
-    ### Step 3 append any missing TRs 
+    ###### Step 3 append any missing TRs 
+    # Sometimes we may stop a movie before it finishes for various reasons. If more than half of the movie was usable, though, we will still want to analyse it and need to add buffer TRs at the end to avoid errors later on
+
     echo Extending file if TRs are missing at the end 
     
     ./scripts/MM_analyses/extend_movie_data.sh ${output_std} ${counter} ${movie_out_name} ${nTRs} ${preprocessing_type}
 
 
-    ### Step 4 make the eye closure files 
+    ###### Step 4 make the eye closure files 
+    # Figure out which TRs are not usable based on eye closure
+
     echo Making the eye closure file
     
     # need strings for matlab .. 
@@ -167,8 +173,8 @@ do
     matlab -nodesktop -nosplash -nodisplay -jvm -r "addpath('scripts/MM_analyses/'); generate_eyetracker_confounds($file_name,$movie,$movie_out_name,93,$preprocessing_type,0); exit"
 
 
-	#add to the counter
-	counter=$((counter+1))
+    #add to the counter
+    counter=$((counter+1))
     
     
 done

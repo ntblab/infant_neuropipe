@@ -29,8 +29,8 @@ source globals.sh
 
 # What is the name of movie you care about?
 movie='PlayVideo_'
-movie_out_name='Mickey_DONT_SHARE' # Mickey, temporarily named so we don't overwrite files 
-nTRs=148 # two viewings
+movie_out_name='Mickey' # Mickey is a more informative name 
+nTRs=148 # assume two back-to-back viewings
 
 
 # Make the data directory
@@ -55,6 +55,7 @@ file_name=${SUBJ}_Z.nii.gz
 #zscored_str="'${MM_path}/NIFTI/${file_name}'"
 
 ###### Step 1 - zscore while excluding NaNs
+# This was done for all movies played within the same functional run in an earlier preprocessing step, and can be skipped since the only movie ever run during this experiment is the same Mickey movie
 
 # find the motion confounds
 MotionConfounds="${PlayVideo_path}/Confounds/MotionConfounds.txt"
@@ -77,6 +78,7 @@ cp ${PlayVideo_path}/Confounds/MotionConfounds.txt $group_dir/motion_confounds/$
 cp ${PlayVideo_path}/NIFTI/${file_name} $group_dir/preprocessed_native/$preprocessing_type/
 
 ###### Step 2 align the data
+# use alignment created earlier in preprocessing
 
 input_func=$group_dir/preprocessed_native/$preprocessing_type/${file_name}
 output_std=$group_dir/preprocessed_standard/$preprocessing_type/${file_name}
@@ -112,7 +114,9 @@ do
     fi
 done
     
-### Step 3 append any missing TRs 
+###### Step 3 append any missing TRs
+# Sometimes we may stop a movie before it finishes for various reasons. If more than half of the movie was usable, though, we will still want to analyse it and need to add buffer TRs at the end to avoid errors later on
+# Additionally, while most subjects saw the movie back-to-back, some only had one useable viewing so we will create an empty volume corresponding to the second movie for those participants
 
 echo Extending file if TRs are missing at the end 
     
@@ -120,6 +124,7 @@ echo Extending file if TRs are missing at the end
 
 
 ### Step 4 make the eye closure files 
+# Figure out which TRs are not usable based on eye closure
 echo Making the eye closure file
     
 # need strings for matlab .. 
@@ -128,6 +133,7 @@ movie="'${movie}'"
 movie_out_name="'${movie_out_name}'"
 preprocessing_type="'${preprocessing_type}'"
     
+# here we use the length of an individual movie, since eye-tracking was separated for each block 
 matlab -nodesktop -nosplash -nodisplay -jvm -r "addpath('scripts/PlayVideo_analyses/'); generate_eyetracker_confounds($file_name,$movie,$movie_out_name,74,$preprocessing_type,0); exit"
 
 
