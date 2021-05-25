@@ -2,7 +2,7 @@
 %
 % Inputs are the name of the preprocessed data data (e.g., ${SUBJ}_Z.nii.gz), the name of the movie as it was being collected, a simpler name of the movie for the group folder, the movie length, the preprocessing type,  and the shift
 % Specify the shift you want to use to align the eye tracking data to the fMRI data (-2 would be appropriate)
-% Note that this is not fully functional for movies other than the pilot movie, since it assumes the movie was played in block 1
+% Note that this is not fully functional for movies other than the Pilot (also called Aeronaut in some places) movie, since it assumes the movie was played in block 1
 
 function generate_eyetracker_confounds(file_name, movie, movie_out_name, movie_length, preprocessing_type, shift)
 

@@ -28,7 +28,7 @@ GenerateTrials = varargin{3};
 
 TR = 2; % Assume the TR is 2s
 
-is_conservative = 0; % If this is 1 then you will only consider a present response acceptable. If it is set to zero then only a response that isn't off screen is acceptable. So if there is no eye tracking data or there is
+is_conservative = 0; % If this is 1 then you will only consider a present response acceptable. If it is set to zero then only a response that isn't off screen is acceptable
 
 % Specify the experiment ID
 Experiment = 'MM';
@@ -88,6 +88,7 @@ for IdxCounter=1:length(EyeData.Timecourse.(Experiment))
     block_end_elapsed = (block_end - onset_time) / EyeData.EyeTrackerTime.slope;
     
     % Specify all of the Drop periods
+    % NOTE: the timing of drop periods (when the visual of the movie goes blank, if it is a Dropped movie) is hard-coded to occur in 10-second intervals, alternating with on-periods throughout the movie. If "Drop" is in the movie name and this functionality is not desired, edits will need to be made here
     Drop_windows = [];
     if strcmp(MovieName(1:4), 'Drop')
         
@@ -293,7 +294,6 @@ fclose(fid);
 if ~isempty(Data.Experiment_MM.(Block_Name).Timing.Movie_1.TR)
     EyeData.Exclude.(Experiment)=Exclude;
 else
-    %not sure if this is right .... 
     EyeData.Exclude.(Experiment)=Exclude;
 end
 

@@ -9,6 +9,9 @@
 # Step 4: figure out which TRs they had their eyes closed for 
 # Transfers all of these files to the group folder
 #
+# Note that we only ever showed the same movie clip ("Mickey") using the PlayVideo experiment presentation method 
+# There is therefore some discrepancy between movie names used in earlier preprocessing steps and in this script, but we use the name Mickey in group analyses because it is more informative 
+#
 # Reworked so everything can be run in participant folder TY 052021
 #
 #SBATCH --output=./logs/supervisor_Mickey-%j.out
@@ -28,8 +31,8 @@ preprocessing_type='linear_alignment' # could also be "nonlinear"
 source globals.sh
 
 # What is the name of movie you care about?
-movie='PlayVideo_'
-movie_out_name='Mickey' # Mickey is a more informative name 
+movie='PlayVideo_' # name of the movie in the subject folders, following outputs of the experiment menu and analysis timing
+movie_out_name='Mickey' # more informative name to be used in group folders
 nTRs=148 # assume two back-to-back viewings
 
 

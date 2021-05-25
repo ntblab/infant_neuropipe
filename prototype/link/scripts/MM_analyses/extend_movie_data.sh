@@ -1,6 +1,6 @@
 #!/usr/bin/sh
 #
-# Take in a volume name (representing data stored in a group standard folder) and number of TRs to add a movies worth of data (93 TRs for MM) to both the functional volume and to the confound regressor
+# Take in a volume name (representing data stored in a group standard folder) and number of TRs to add enough TRs for a movies worth of data (93 TRs for MM) in both the functional volume and the confound regressor
 source ./globals.sh
 
 # What is the volume
@@ -15,9 +15,9 @@ movie_out_name=$3
 # How many TRs total should there be?
 total_trs=$4
 
-if [ $# -eq 5 ]
+if [ $# -eq 4 ]
 then
-    preprocessing_type='linear_alignment'
+    preprocessing_type='nonlinear_alignment'
 else
     preprocessing_type=$4
 fi

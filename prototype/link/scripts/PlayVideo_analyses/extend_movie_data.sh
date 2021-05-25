@@ -1,6 +1,6 @@
 #!/usr/bin/sh
 #
-# Take in a volume (assumed to be in a movie-specific preprocessed_standard/ folder in data) and add a movies worth of data (74 TRs) to both the functional volume and to the confound regressor (and exclude all the timepoints for the second movie)
+# Take in a volume (assumed to be in a movie-specific preprocessed_standard/ folder in data) and add enough TRs to equal two movies worth of data (74 TRs *2) in both the functional volume and the confound regressor 
 
 source ./globals.sh
 
@@ -13,9 +13,9 @@ movie_out_name=$2
 # How many TRs total should there be?
 total_trs=$3 
 
-if [ $# -eq 5 ]
+if [ $# -eq 3 ]
 then
-    preprocessing_type='linear_alignment'
+    preprocessing_type='nonlinear_alignment' 
 else
     preprocessing_type=$4
 fi

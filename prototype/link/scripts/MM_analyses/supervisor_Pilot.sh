@@ -9,6 +9,10 @@
 # Step 4: figure out which TRs they had their eyes closed for 
 # Transfers all of these files to the group folder
 #
+# Note that several movie clips could have been shown using the MM experiment presentation method, but we specify here to use the movie that was collected in the most number of subjects, in a no-sound condition, and with the visual input intact ("MM-Full_Pilot_NoAudio_") This name is a mouthful, and could be confusing given other connotations of the word "pilot" so we chose to call the movie "Aeronaut" in our manuscripts
+# There is therefore some discrepancy between movie names used in earlier preprocessing steps and in this script, but we use the name Aeronaut in group analyses because it is more informative 
+#
+#
 # TY 07112019 
 # Pilot updates TY 09132019
 # Reworked so everything can be run in participant folder TY 052021
@@ -21,16 +25,25 @@
 if [ $# -eq 0 ]
 then
     analysis_type='default'
+    preprocessing_type='nonlinear_alignment'
 else
     analysis_type=$1
 fi
 
-preprocessing_type='linear_alignment' # could also be "nonlinear"
+if [ $# -eq 1 ]
+then
+    preprocessing_type='nonlinear_alignment' # could also be "linear"
+else
+    preprocessing_type=$1
+    
+fi
+
+
 
 source globals.sh
 
 # What is the name of movie you care about?
-movie="MM-Full_Pilot_NoAudio_"
+movie="MM-Full_Pilot_NoAudio_" # name of the movie in the subject folders, following outputs of the experiment menu and analysis timing
 movie_out_name='Aeronaut' # Aeronaut is a simpler name we use in manuscripts to avoid confusion over the word pilot
 nTRs=93
 
