@@ -14,3 +14,6 @@ Added support for iBEAT and added the citation for the methods paper
 
 ## V_1.4
 Added support for nonlinear alignment via ANTS and updated the tutorial
+
+## V_1.4_Ev
+Version 1.4 of infant neuropipe, but with additional scripts for running Event Segmentation  analyses

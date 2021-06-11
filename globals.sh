@@ -12,8 +12,8 @@ TR= # TR duration in seconds
 PACKAGES_DIR= # Full path to package directory
 ATLAS_DIR= #Full path to atlas directory
 SCHEDULER=slurm  # Default scheduler
-SHORT_PARTITION=short # Partition for jobs <6 hours
-LONG_PARTITION=verylong # Partition for jobs >24 hours
+SHORT_PARTITION=day # Partition for jobs <6 hours
+LONG_PARTITION=week # Partition for jobs >24 hours
 
 # Modules
 # Load Matlab (tested on R2016b)
@@ -22,8 +22,9 @@ LONG_PARTITION=verylong # Partition for jobs >24 hours
 # Load Anacoda with python 3.5
 # Load Freesurfer (tested on 6.0.0)
 # Load BXH_XCEDE tools (tested on 1.11.14)
-# Load brainiak (tested on 0.7.1)
-# Load nilearn (tested on 0.4.0)
+# Load brainiak (tested on 0.8)
+# Load nilearn (tested on 0.5.0)
+# Load OpenMPI (tested on 2.1.2)
 
 ##############################
 
