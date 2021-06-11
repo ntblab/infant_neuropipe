@@ -6,27 +6,25 @@
 set -e # stop immediately when an error occurs
 
 ###### THINGS TO CHANGE ######
-export BXH_DIR=/nexsan/apps/hpc/Tools/BXH_XCEDE/1.11.14/bin
-PROJ_DIR=/gpfs/milgram/project/turk-browne/projects/dev_neuropipe/
-TR=2
-PACKAGES_DIR=/gpfs/milgram/project/turk-browne/packages/
-ATLAS_DIR=/gpfs/milgram/project/turk-browne/shared_resources/atlases/
-SCHEDULER=slurm  
-SHORT_PARTITION=short # Partition for jobs <6 hours
-LONG_PARTITION=verylong # Partition for jobs >24 hours
+export BXH_DIR= # Full path to BXH_XCEDE binary file
+PROJ_DIR= # Full path to project directory file
+TR= # TR duration in seconds
+PACKAGES_DIR= # Full path to package directory
+ATLAS_DIR= #Full path to atlas directory
+SCHEDULER=slurm  # Default scheduler
+SHORT_PARTITION=day # Partition for jobs <6 hours
+LONG_PARTITION=week # Partition for jobs >24 hours
 
 # Modules
-module load Apps/Matlab/R2016b
-module load Apps/AFNI/2017-08-11
-module load Apps/FSL/5.0.9
-module load Langs/Python/3.5-anaconda
-module load Apps/FREESURFER/6.0.0
-module load Tools/BXH_XCEDE/1.11.14
-module load Pypkgs/brainiak/0.7.1-anaconda
-module load Pypkgs/NILEARN/0.4.0-anaconda
-
-. ${FSLDIR}/etc/fslconf/fsl.sh
-#. /apps/hpc/Apps/FREESURFER/6.0.0/FreeSurferEnv.sh
+# Load Matlab (tested on R2016b)
+# Load AFNI (tested on 2017-08-11)
+# Load FSL (tested on 5.0.9)
+# Load Anacoda with python 3.5
+# Load Freesurfer (tested on 6.0.0)
+# Load BXH_XCEDE tools (tested on 1.11.14)
+# Load brainiak (tested on 0.8)
+# Load nilearn (tested on 0.5.0)
+# Load OpenMPI (tested on 2.1.2)
 
 ##############################
 

@@ -1,4 +1,15 @@
-# Import a bunch of stuff 
+# Intersubject correlation with edits specific for infant data
+
+# This code is based **heavily** on the BrainIAK v0.8 implementation of ISC (Copyright 2017 Intel Corporation)
+# https://github.com/brainiak/brainiak/blob/master/brainiak/isc.py
+# Original authors: Sam Nastase, Christopher Baldassano, Qihong Lu, Mai Nguyen, and Mor Regev
+# Princeton University, 2018
+
+# Differences from this script and the BrainIAK implementation include defining certain functions (e.g., array_correlation) inside of this file instead of in a separate utils file. Other helpful functions (such as ones for checking the shape of input data, and running timeshift_isc and phaseshift_isc analyses) that are present in the BrainIAK implementation have been stripped here for simplicity. The main difference between this file and BrainIAK ISC are in how NaNs are dealt with: in BrainIAK, NaNs can either be completely ignored when computing the mean time series for N-1 subjects or ignored when a threshold proportion of subjects with non-NaN values is not met (if under this threshold, or tolerate_nans is set to False, these timepoints will not be included in the analysis). This step comes before computing the correlation between the average N-1 subjects and the leftout subject when performing leave-one-out ISC, and is implemented with a function called _threshold_nans(). In the current modified ISC script, however, the ability to provide a threshold proportion of timepoints is not enabled. Instead, if NaNs are present, they will always be averaged out when computing the mean time series of N - 1 subjects (if tolerate_nans is set to True, which was the case for our analyses). If NaNs persist after group averaging (which is possible in infant participants with more missing data), these timepoints are filtered out inside of the array_correlation() function, in addition to any NaN timepoints that might be present in the leftout subject. These changes are marked as ### Infant specific change ###  
+# Authors of modified ISC file: Cameron Ellis and Tristan Yates
+# Yale University, 2020
+
+# Imports
 from matplotlib import pyplot as plt
 import matplotlib.patches as patches
 import numpy as np
@@ -20,7 +31,7 @@ from nilearn import plotting
 
 # Edited ISC code from BrainIAK 
 def isc(data, pairwise=False, tolerate_nans=True):
-    
+   
     # Check tolerate_nans input and use either mean/nanmean and exclude voxels
     if tolerate_nans:
         mean = np.nanmean
@@ -106,10 +117,12 @@ def array_correlation(x, y, axis=0):
     if axis == 1:
         x, y = x.T, y.T
     
-    
+    ### Infant specific change ###
+    # Find the NaN timepoints in the average
     notnans_x=~np.isnan(np.array(x))
     included_trs_x=notnans_x[:,0]
     
+    # Find the NaN timepoints in the individual
     notnans_y=~np.isnan(np.array(y))
     included_trs_y=notnans_y[:,0]
     

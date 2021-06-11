@@ -1,39 +1,15 @@
-#  Copyright 2016 Princeton University
-#
-#  Licensed under the Apache License, Version 2.0 (the "License");
-#  you may not use this file except in compliance with the License.
-#  You may obtain a copy of the License at
-#
-#       http://www.apache.org/licenses/LICENSE-2.0
-#
-#  Unless required by applicable law or agreed to in writing, software
-#  distributed under the License is distributed on an "AS IS" BASIS,
-#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#  See the License for the specific language governing permissions and
-#  limitations under the License.
-"""Event segmentation using a Hidden Markov Model
-Given an ROI timeseries, this class uses an annealed fitting procedure to
-segment the timeseries into events with stable activity patterns. After
-learning the signature activity pattern of each event, the model can then be
-applied to other datasets to identify a corresponding sequence of events.
-Full details are available in:
-Christopher Baldassano, Janice Chen, Asieh Zadbood,
-Jonathan W Pillow, Uri Hasson, Kenneth A Norman
-Discovering event structure in continuous narrative perception and memory
-Neuron, Volume 95, Issue 3, 709 - 721.e5
-https://doi.org/10.1016/j.neuron.2017.06.041
-This class also extends the model described in the Neuron paper, by allowing
-transition matrices that are composed of multiple separate chains of events
-rather than a single linear path. This allows a model to contain patterns for
-multiple event sequences (e.g. narratives), and fit probabilities along each of
-these chains on a new, unlabeled timeseries.
-"""
+# Event segmentation using a Hidden Markov Model with edits specific for infant data
 
-# Authors: Chris Baldassano and Cătălin Iordan (Princeton University)
+# This code is based **heavily** on the BrainIAK v0.8 implementation of event segmentation (Copyright 2016 Princeton University)
+# https://github.com/brainiak/brainiak/blob/master/brainiak/eventseg/event.py
+# Original authors: Chris Baldassano and Cătălin Iordan 
+# Princeton University, 2018
 
-# Infant-specific edits made 1/13/2020 by TY with advice from CB
-# NaN edits to find_events 7/31/2020 TY
+# Differences from this script and the BrainIAK implementation include defining certain functions (e.g., masked_log) inside of this file instead of in a separate utils file. The main difference between this file and the BrainIAK event segmentation model is how missing timepoints are dealt with. While the event segmentation model can take as input a list of subject data, we can use the average time series across subjects within a group or iteration in order to speed up the calculation. The v0.8 BrainIAK version of the script would assign the same variance parameter to timepoints that may have had more subjects contributing to the group average, which may not be desirable, since timepoints with data from more subjects can be thought of as more "trustworthy" than other timepoints. Additionally, it did not have a method of dealing with NaNs that persisted after group averaging (which can happen in noisier infant data). To address the first point, we supply an additional input along with the average group time series data to the fit() function of the event segmentation model called nsubj, which is an array with a length corresponding to the number of timepoints and values corresponding to the number of subjects with non-NaN data at each timepoint. In the _logprob_obs() function, this array is used to scale the Gaussian variance used during fitting by the square-root of the maximum number of participants divided by the square-root of the number of participants with data at that point. This differs from the original script, where the variance was assumed to be the same across timepoints during initial model fitting. To address the second point of missing timepoints even after averaging, we also edited the _forward_backward() function to linearly interpolate the log-probability for missing timepoints based on nearby values. Without this edit, the function would fail to find the log probability that each timepoint belongs to each event. These changes are marked as ### Infant specific change ###  
+# Authors of modified script: Tristan Yates and Chris Baldassano 
+# Yale University, 2020
 
+# Imports
 import numpy as np
 from scipy import stats
 import logging
@@ -127,7 +103,7 @@ class EventSegment(BaseEstimator):
         else:
             self.event_chains = event_chains
 
-    def fit(self, nsubj,X, y=None):
+    def fit(self, nsubj, X, y=None):
         """Learn a segmentation on training data
         Fits event patterns and a segmentation to training data. After
         running this function, the learned event patterns can be used to
@@ -141,7 +117,6 @@ class EventSegment(BaseEstimator):
             are segmented simultaneously with the same event patterns
         y: not used (added to comply with BaseEstimator definition)
         Returns
-       
 
         -------
         self: the EventSegment object
@@ -149,7 +124,7 @@ class EventSegment(BaseEstimator):
 
         X = copy.deepcopy(X)
         if type(X) is not list:
-            X = check_array(X,force_all_finite=False) #CHANGE HERE
+            X = check_array(X,force_all_finite=False) # CHANGE HERE
             X = [X]
 
         n_train = len(X)
@@ -240,9 +215,9 @@ class EventSegment(BaseEstimator):
         mean_pat_z = stats.zscore(mean_pat, axis=0, ddof=1)
 
         logprob = np.empty((t, self.n_events))
-
-        ############## THIS IS WHERE A CHANGE IS ##############
-        # but actually we want to set all the NaN voxels to 0
+        
+        ### Infant specific change ###
+        # Scale the variance by the number of subjects contributing data to that timepoint
         if type(var) is not np.ndarray:
             var = var * np.ones(self.n_events)
 
@@ -253,9 +228,7 @@ class EventSegment(BaseEstimator):
                 (data_z.T - mean_pat_z[:, k]).T ** 2, axis=0) / timepoint_var
 
         logprob /= n_vox
-        
-        ############## THIS IS WHERE A CHANGE IS ##############
-        # but actually we want to set all the NaN voxels to 0
+
        
         return logprob
 
@@ -282,8 +255,8 @@ class EventSegment(BaseEstimator):
         t = logprob.shape[0]
         
 
-        ############## THIS IS WHERE A CHANGE IS ##############
-        ### If there are NaNs in the data, you cannot compute the log-likelihood
+        ### Infant specific change ###
+        # If there are NaNs in the data, you cannot compute the log-likelihood
         # Therefore we will perform a linear interpolation of what the logprob could possible be based on its nearby values
         
         nans=np.isnan(logprob[:,0])
@@ -291,8 +264,7 @@ class EventSegment(BaseEstimator):
 
         for ev in range(logprob.shape[1]):
             logprob[nans,ev]= np.interp(lin_func(nans), lin_func(~nans), logprob[~nans,ev])
-                
-        ############## THIS IS WHERE A CHANGE IS ##############
+ 
         
         logprob = np.hstack((logprob, float("-inf") * np.ones((t, 1))))
             

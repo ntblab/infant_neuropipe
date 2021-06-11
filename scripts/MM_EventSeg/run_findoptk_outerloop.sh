@@ -6,10 +6,8 @@
 #SBATCH -t 30:00
 #SBATCH --mem 5G
 
-module load Python/Anaconda3
-module load brainiak/0.8-Python-Anaconda3
-module load nilearn/0.5.0-Python-Anaconda3
-module load OpenMPI/2.1.2-GCC-6.4.0-2.28
+# Load the modules
+source globals.sh
 
 #Script inputs
 movie=$1

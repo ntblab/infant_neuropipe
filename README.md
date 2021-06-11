@@ -1,5 +1,13 @@
 # Development project analysis pipeline
-## V_1.4
+## V_1.4_Ev
+
+-----------------------------------------
+
+Branch for code necessary for running event segmentation analyses on infant movie-watching data. This branch is based off of the branch `Movies` which contains the preprocessing scripts for movie data.
+
+Read `scripts/MM_EventSeg/README.md` to get oriented.
+
+-----------------------------------------
 
 ### Refer to the associated [publication](https://www.nature.com/articles/s41467-020-18286-y) for additional details: Ellis, C. T., Skalaban, L. J., Yates, T. S., Bejjanki, V. R., Córdova, N. I., & Turk-Browne, N. B. (2020). Re-imagining fMRI for awake behaving infants. Nature Communications, 11(1), 1-12.
 
