@@ -3,7 +3,7 @@
 # Take a freesurfer directory, a hemisphere, and a niml file from a participants ROI tracing and create text files that have the volume at each node (for wm and pial separately).
 # This can then be used by $PROJ_DIR/scripts/retinotopy/Retinotopy.ipynb to calculate the volume per ROI and plot the results
 # For instance you can use these commands:
-# ./scripts/retinotopy/calculate_surface_volume.sh iBEAT rh rh.manual
+# ./scripts/retinotopy/calculate_surface_volume.sh analysis/freesurfer/iBEAT/SUMA/ iBEAT rh rh.manual 1
 #
 #SBATCH --output=./logs/calculate_surface_volume-%j.out
 #SBATCH -p short
@@ -11,12 +11,13 @@
 #SBATCH --mem 20000
 
 # Get the inputs
-FREESURFER_NAME=$1 # What is the name of the freesurfer directory being loaded. Must be in analysis/freesurfer/
-hemisphere=$2 # What hemisphere are you using
-niml_name=$3 # What is the prefix of the ROI you saved
+SUMA_folder=$1 # What SUMA folder do you want to load? almost certainly analysis/freesurfer/$FREESURFER_NAME/SUMA/, unless running from the project directory
+FREESURFER_NAME=$2 # What is the name of the freesurfer directory being loaded. Must be in 
+hemisphere=$3 # What hemisphere are you using
+niml_name=$4 # What is the prefix of the ROI you saved
 
 # Move in to the participant directory
-cd analysis/freesurfer/${FREESURFER_NAME}/SUMA/
+cd ${SUMA_folder}
 
 # Make the roi file into a dataset, separating all of the ROIs
 surf_input=${niml_name}.niml.roi
@@ -35,13 +36,15 @@ rm -f temp_${niml_name}.coord.1D.dset
 # Do the padding
 ConvertDset -o_1D -input ${niml_name}.1D.dset -prefix ${niml_name}_padded -pad_to_node ${padded_nodes} -node_index_1D ${niml_name}.1D.dset[0]
 
-# Transform this ROI into standard space (not needed here, but might as well do it)
-rm -f std.141.${hemisphere}.manual.1D
-SurfToSurf -i_fs std.141.${hemisphere}.full.flat.patch.3d.asc -i_fs ${hemisphere}.full.flat.patch.3d.asc -prefix std.141.${hemisphere}.manual -data "${niml_name}_padded.1D.dset" -mapfile std.141.${FREESURFER_NAME}_${hemisphere}.niml.M2M -output_params NearestNode
+# Transform this ROI into standard space needed for doing a subsidiary analysis
+echo Transforming to standard space
+
+rm -f std.141.${niml_name}.1D
+SurfToSurf -i_fs std.141.${hemisphere}.full.flat.patch.3d.asc -i_fs ${hemisphere}.full.flat.patch.3d.asc -prefix std.141.${niml_name} -data "${niml_name}_padded.1D.dset" -mapfile std.141.${FREESURFER_NAME}_${hemisphere}.niml.M2M -output_params NearestNode
 
 # Now remove the first columns with irrelevant details
-1dcat -sel [2-$] std.141.${hemisphere}.manual.1D > temp_${niml_name}.1D
-mv temp_${niml_name}.1D std.141.${hemisphere}.manual.1D
+1dcat -sel [2-$] std.141.${niml_name}.1D > temp_${niml_name}.1D
+mv temp_${niml_name}.1D std.141.${niml_name}.1D
 
 mkdir ROI_${niml_name} # Make a directory to put results
 
