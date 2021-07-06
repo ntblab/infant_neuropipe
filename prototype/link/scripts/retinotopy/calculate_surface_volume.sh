@@ -3,7 +3,7 @@
 # Take a freesurfer directory, a hemisphere, and a niml file from a participants ROI tracing and create text files that have the volume at each node (for wm and pial separately).
 # This can then be used by $PROJ_DIR/scripts/retinotopy/Retinotopy.ipynb to calculate the volume per ROI and plot the results
 # For instance you can use these commands:
-# ./scripts/retinotopy/calculate_surface_volume.sh analysis/freesurfer/iBEAT/SUMA/ iBEAT rh rh.manual 1
+# ./scripts/retinotopy/calculate_surface_volume.sh analysis/freesurfer/iBEAT/SUMA/ iBEAT rh rh.areas_CE
 #
 #SBATCH --output=./logs/calculate_surface_volume-%j.out
 #SBATCH -p short
@@ -12,7 +12,7 @@
 
 # Get the inputs
 SUMA_folder=$1 # What SUMA folder do you want to load? almost certainly analysis/freesurfer/$FREESURFER_NAME/SUMA/, unless running from the project directory
-FREESURFER_NAME=$2 # What is the name of the freesurfer directory being loaded. Must be in 
+FREESURFER_NAME=$2 # What is the name of the freesurfer directory being loaded. Must be in the `analysis/freesurfer/` folder
 hemisphere=$3 # What hemisphere are you using
 niml_name=$4 # What is the prefix of the ROI you saved
 
