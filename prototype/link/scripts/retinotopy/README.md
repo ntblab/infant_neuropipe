@@ -1,6 +1,6 @@
 # Analysis pipeline for retinotopy
 
-This outlines the analysis pipeline for running retinotopy analyses. This assumes that the normal infant\_neuropipe steps have been completed.
+This outlines the analysis pipeline for running retinotopy analyses. This assumes that the normal infant\_neuropipe steps have been completed. You may also want to run the `generate_eye_confound_time_course.m` script to get the eye tracking confounds that are useful for some analyses.  
 
 1. Run retinotopy GLMs.
 Use **sbatch ./scripts/retinotopy/supervisor_retinotopy.sh** to run the necessary GLMs to compare high and low spatial frequency, horizontal and vertical meridians, and the F-test of all conditions.
