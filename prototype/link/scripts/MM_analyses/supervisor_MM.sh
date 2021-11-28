@@ -1,24 +1,31 @@
 #!/bin/bash
 #
-# Automate the analysis of PlayVideo 
+# Automate the transfer of MM videos to a standardised format/directory
 # Assumes you are running from the subject base directory
 
-# Step 1: Z-score data while ignoring NaNs (already done in earlier preprocessing)
-# Step 2: Align the participant data to adult standard 
-# Step 3: Extend the data if there are TRs missing at the end
+# Step 1: Z-score data while ignoring NaNs
+# Step 2: Extend the data if there are TRs missing at the end
+# Step 3: Align the participant data to adult standard 
 # Step 4: figure out which TRs they had their eyes closed for 
+# Step 5: Move the raw timing and nifti files, as well as the transformation matrices
 # Transfers all of these files to the group folder
 #
-# Reworked so everything can be run in participant folder TY 052021
-# Updated to align with MM script (though only roughly)
+# Example command:
+# sbatch ./scripts/MM_analyses/supervisor_MM.sh default MM-Full_Pilot_NoAudio_ Aeronaut mov_01
 #
-#SBATCH --output=./logs/supervisor_Mickey-%j.out
-#SBATCH -p day
+# TY 07112019 
+# Pilot updates TY 09132019
+# Reworked so everything can be run in participant folder TY 052021
+# Updated to work with any MM data
+#
+#SBATCH --output=./logs/supervisor_MM-%j.out
+#SBATCH -p psych_day
 #SBATCH -t 1:00:00
 #SBATCH --mem 16000
 
 source globals.sh
 
+# What analysis type
 if [ $# -lt 1 ]
 then
     analysis_type='default'
@@ -29,7 +36,7 @@ fi
 # Specify the movie that is being loaded in (use the underscore at the end). The name may be esoteric, which the next input can fix
 if [ $# -lt 2 ]
 then
-    movie='PlayVideo_'
+    movie="MM-Full_Pilot_NoAudio_"
 else
     movie=$2
 fi
@@ -37,7 +44,7 @@ fi
 # What is the folder name you want to output
 if [ $# -lt 3 ]
 then
-    movie_out_name='Mickey_TEST' # temporarily named so we don't overwrite files 
+    movie_out_name='Aeronaut_TEST' # Aeronaut, temporarily named so we don't overwrite files 
 else
     movie_out_name=$3
 fi
@@ -51,12 +58,13 @@ else
 fi
 
 # Get the number of TRs that are expected
-nTRs=148 # two viewings
-nTRs_halved=74 #one viewing
-default_burnin=3
+nTRs=93
 
 # Get the name according to matlab
-experiment_name='PlayVideo'
+experiment_name='MM'
+
+# Default burn in for the raw data
+default_burnin=3
 
 # Make the data directory (okay if already made)
 group_dir=$PROJ_DIR/data/Movies/${movie_out_name}/
@@ -73,37 +81,57 @@ mkdir -p $group_dir/raw_timing/
 
 # What are the appropriate paths
 subject_dir=$(pwd)
-PlayVideo_path=${subject_dir}/analysis/secondlevel_${experiment_name}/${analysis_type}/
+MM_path=${subject_dir}/analysis/secondlevel_${experiment_name}/${analysis_type}/
 
-# Get the nifti file (here we will take all viewings, that are already zscored)
-nifti=${PlayVideo_path}/NIFTI/func2highres_PlayVideo_Z.nii.gz
+# Find all of the niftis that include this movie
+movie_niftis=`ls ${MM_path}/NIFTI/func2highres_${movie}*`
+
+# Sometimes there will be multiple usable viewings of the same movie, we are going to use the first one by default
+nifti=`echo ${movie_niftis} | awk '{ print $1 }'`
 
 nifti_str="'${nifti}'"
 
 zscored_str=$group_dir/preprocessed_native/linear_alignment/${ppt_out}_Z.nii.gz
 
-###### Step 1 - zscore while excluding NaNs due to motion
+###### Step 1 - zscore while excluding NaNs
+# Find out what functional and block number the movie was run in
+temp=${nifti##*$movie}
+FuncBlock=${temp%.nii.gz}
+
 # find the motion confounds
-MotionConfounds="${PlayVideo_path}/Confounds/MotionConfounds.txt"
- 
+MotionConfounds="${MM_path}/Confounds/MotionConfounds_${FuncBlock}.txt"
+
 # Which TRs are excluded?
 ExcludedTRs=(`grep -n 1 $MotionConfounds | cut -d: -f1`)
 exclusions="[${ExcludedTRs[@]}]"
 
-echo "$exclusions TRs are being excluded for Play Video"
+echo "$exclusions TRs are being excluded for ${FuncBlock} using zscore_exclude"
+	
+# run the script        
+matlab -nodesktop -nosplash -nodisplay -jvm -r "addpath('scripts/'); z_score_exclude($nifti_str, '$zscored_str', $exclusions);"
 
-# skip running the step, this was already technically run   
-# matlab -nodesktop -nosplash -nodisplay -jvm -r "addpath('scripts/'); z_score_exclude($nifti_str, $zscored_str, $exclusions);"
-cp ${nifti} ${zscored_str}
 
+# Check if finished
+waiting=1
+echo Waiting for file
+while [[ $waiting -eq 1 ]] 
+do 
+	if  [[ -e $zscored_str ]]
+	then
+		waiting=0
+	else
+		sleep 10s
+	fi
+done
+ 
 # Copy the motion confounds
 ConfoundFile=$group_dir/motion_confounds/${ppt_out}.txt
-cp $PlayVideo_path/Confounds/MotionConfounds.txt $ConfoundFile
+cp $MM_path/Confounds/MotionConfounds_$FuncBlock.txt $ConfoundFile
 
 ### Step 2 append any missing TRs 
 echo Extending file if TRs are missing at the end 
-    
-./scripts/PlayVideo_analyses/extend_movie_data.sh ${zscored_str} ${ConfoundFile} ${nTRs}
+
+./scripts/MM_analyses/extend_movie_data.sh ${zscored_str} ${ConfoundFile} ${nTRs}
 
 
 ###### Step 3 align the data
@@ -138,6 +166,7 @@ do
 
 done
 
+
 # Check if alignment is done
 waiting=1
 while [[ $waiting -eq 1 ]] 
@@ -150,80 +179,52 @@ do
 	fi
 done
 
-
 ### Step 4 make the eye closure files 
 echo Making the eye closure file
-    
-# need strings for matlab .. 
-movie_str="'${movie}'"
-experiment_name_str="'${experiment_name}'"
 
 # need strings for matlab .. 
 output_name="'$group_dir/eye_confounds/${ppt_out}.txt'"
 
-    
-matlab -nodesktop -nosplash -nodisplay -jvm -r "addpath('scripts/PlayVideo_analyses/'); generate_eyetracker_confounds($output_name,$movie_str,$nTRs_halved,$experiment_name_str,0); exit"
+matlab -nodesktop -nosplash -nodisplay -jvm -r "addpath('scripts/MM_analyses/'); generate_eyetracker_confounds($output_name,'$movie',$nTRs,'$experiment_name',0);"
 
 ### Step 5 Transfer raw data and transformation matrices
 
-func_files=`ls analysis/secondlevel_PlayVideo/default/NIFTI/*functional*block*` # get the names of the files for the multiple blocks
+echo Preparing the transfer of raw data, timing, and transformation matrices
 
-func_list="" # initialize 
-for file in $func_files
-do
+# Copy the raw timing files as well as the associated functionals and func2highres alignments
+func_run=${FuncBlock%%_*}
+file=analysis/firstlevel/Timing/${func_run}_${movie::-1}.txt
 
-    # Copy the raw timing files as well as the associated functionals and func2highres alignments
-    FuncBlock=${file##*-}
-    block=${FuncBlock%%_functional*} # get the block name 
+# Copy over the timing file
+cp $file $group_dir/raw_timing/${ppt_out}_${func_run}.txt
+
+# Use the default burn in if not specified
+if [ -z $(grep $func_run analysis/firstlevel/run_burn_in.txt) ]
+then 
+    burnin_val=$default_burnin
     
-    temp=${FuncBlock#*$block*_} # get the functional name
-    func_run=${temp%%_block*}
-    
-    # Because of the way PlayVideo is coded, the block name is used instead of the movie here 
-    file=analysis/firstlevel/Timing/${func_run}_${movie::-1}-${block}.txt 
+else
+    # Figure out what the burn in was and copy that over
+    run_burn_in=`grep $func_run analysis/firstlevel/run_burn_in.txt`
+    burnin_val=${run_burn_in##* }
+fi
 
-    # Copy over the timing file
-    cp $file $group_dir/raw_timing/${ppt_out}_${func_run}_${block}.txt
+echo "Burn in found: $ppt_out $func_run $burnin_val"
 
-    # Did you already transfer the nifti and figure out the burn in? Check the func_list
-    if [[ "$func_list" == *"$func_run"* ]]
-    then
-        echo "already added $func_run raw data"
+# Copy over the burn in value
+echo "$ppt_out $func_run $burnin_val" >> $group_dir/raw_timing/run_burn_in.txt
 
-    else
-        # Use the default burn in if not specified
-        if [ -z $(grep $func_run analysis/firstlevel/run_burn_in.txt) ]
-        then 
-            burnin_val=$default_burnin
+# Copy over the run or pseudorun
+func_file=data/nifti/${SUBJ}_${func_run}.nii.gz
+if [ ! -e ${func_file} ]
+then
+	func_file=analysis/firstlevel/pseudorun/${SUBJ}_${func_run}.nii.gz
+fi
 
-        else
-            # Figure out what the burn in was and copy that over
-            run_burn_in=`grep $func_run analysis/firstlevel/run_burn_in.txt`
-            burnin_val=${run_burn_in##* }
-        fi
+cp $func_file $group_dir/raw_nifti/${ppt_out}_${func_run}.nii.gz
 
-        echo "Burn in found: $ppt_out $func_run $burnin_val"
-
-        # Copy over the burn in value
-        echo "$ppt_out $func_run $burnin_val" >> $group_dir/raw_timing/run_burn_in.txt
-
-        # Copy over the run or pseudorun
-        func_file=data/nifti/${SUBJ}_${func_run}.nii.gz
-        if [ ! -e ${func_file} ]
-        then
-            func_file=analysis/firstlevel/pseudorun/${SUBJ}_${func_run}.nii.gz
-        fi
-
-        cp $func_file $group_dir/raw_nifti/${ppt_out}_${func_run}.nii.gz
-
-        # Copy over the func2highres alignment
-        cp analysis/firstlevel/${func_run}.feat/reg/example_func2highres.mat $group_dir/transformation_mats/${ppt_out}_${func_run}_highres.mat
-
-    fi
-    
-    func_list="${func_list} ${func_run}"
-
-done
+# Copy over the func2highres alignment
+cp analysis/firstlevel/${func_run}.feat/reg/example_func2highres.mat $group_dir/transformation_mats/${ppt_out}_${func_run}_highres.mat
 
 # For each participant copy over the linear and ANTs directories
 cp analysis/secondlevel/registration.feat/reg/highres2standard.mat $group_dir/transformation_mats/${ppt_out}_highres2standard.mat
@@ -236,3 +237,4 @@ cp analysis/secondlevel/highres_original.nii.gz $group_dir/anatomicals/${ppt_out
 echo Finished
 
 exit
+
