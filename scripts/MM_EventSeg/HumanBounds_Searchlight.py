@@ -39,7 +39,7 @@ print('Analysing %s' % movie)
 # movie info
 if movie == 'Aeronaut':
     nTRs=90
-    nSubj=25
+    nSubj=24
     roi = 'intersect_mask_standard_firstview_all' # get just the mask of the first view participants
 elif movie == 'Mickey':
     nTRs=71
@@ -57,14 +57,14 @@ save_plot_dir = movie_eventseg_dir+'plots/'
 ######################################################################################
 ####### Step 1.5 - function to load in the behavioral event boundaries 
 def gethumanbounds():
-    '''get the human-determined behavioral boundaries for this movie and return different forms of the data 
-    useful for running behavioral analyses'''
+    #'''get the human-determined behavioral boundaries for this movie and return different forms of the data 
+    #useful for running behavioral analyses'''
     # import the human labeled events
-    humanlab_events_TR=np.load(movie_eventseg_dir+'behavioral_boundary_events.py')
+    humanlab_events_TR=np.load(movie_eventseg_dir+'behavioral_boundary_events.npy')
     num_events = (len(humanlab_events_TR[0])+1) #length of events
     #print('Number of human labeled events:',num_events)
 
-    # Create an array of length 180 that tells you whether event is a human labeled event
+    # Create an array of length nTRs that tells you whether event is a human labeled event
     events_fullarray = []
     event_idx = humanlab_events_TR[0]
     for idx in range(num_events):
@@ -82,7 +82,7 @@ def gethumanbounds():
 
 
 def humanbounds_eventmat():
-    '''Create a matrix showing which timepoint pairs are within events, and the distance of these pairs from the diagonal'''
+    #'''Create a matrix showing which timepoint pairs are within events, and the distance of these pairs from the diagonal'''
     bounds_TR, events_array = gethumanbounds()
     
     ## Step 1 -- make the matrices that tell you about distance and event status
@@ -170,9 +170,9 @@ sl.broadcast(bcvar)
 ####### Step 4 - define kernel
 
 def find_within_vs_across(data, event_mat, dist_mat):
-    '''Find the within-vs-across behavioral boundary correlations after accounting for distance to the diagonal
-    resamples correlations in the case of unbalanced distributions
-    This approach uses more time points but by not matching time point comparisons, may introduce noise'''
+    #'''Find the within-vs-across behavioral boundary correlations after accounting for distance to the diagonal
+    #resamples correlations in the case of unbalanced distributions
+    #This approach uses more time points but by not matching time point comparisons, may introduce noise'''
     
     corr_mat=np.corrcoef(data)
     
@@ -232,9 +232,9 @@ def find_within_vs_across(data, event_mat, dist_mat):
     return all_differences, weighted_differences
 
 def find_within_vs_across_alt(data, event_mat, dist_mat):
-    '''Find the within-vs-across behavioral boundary correlations for each TR and distance to the diagonal if forward and
-    backward timepoint pairs differ in whether they are within vs across an event
-    This approach is a more conservative and cleaner version of the above approach, but uses less data'''
+    #'''Find the within-vs-across behavioral boundary correlations for each TR and distance to the diagonal if forward and
+    #backward timepoint pairs differ in whether they are within vs across an event
+    #This approach is a more conservative and cleaner version of the above approach, but uses less data'''
     
     corr_mat=np.corrcoef(data)
         
@@ -276,7 +276,7 @@ def find_within_vs_across_alt(data, event_mat, dist_mat):
     
 #What is the kernel?
 def human_bound_kernel(data,sl_mask,myrad,bcvar):
-    '''Searchlight kernel that reshapes the data and decides whether there are enough voxels to run the algorithm'''
+    #'''Searchlight kernel that reshapes the data and decides whether there are enough voxels to run the algorithm'''
     
     event_mat=bcvar[0] # so we know what we are doing
     dist_mat=bcvar[1]
@@ -295,7 +295,7 @@ def human_bound_kernel(data,sl_mask,myrad,bcvar):
            
         
         # Get the output (the weighted version)
-        _,output =  find_within_vs_across(data, event_mat, dist_mat)
+        _,output =  find_within_vs_across(data, event_mat, dist_mat) # output =  find_within_vs_across_alt(data, event_mat, dist_mat)
         
     else:
         output=-1

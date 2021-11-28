@@ -8,7 +8,6 @@ import numpy as np
 import pandas as pd
 import sys
 import os
-from brainiak import isfc
 from brainiak.fcma.util import compute_correlation
 import brainiak.funcalign.srm
 from scipy import stats
@@ -32,7 +31,7 @@ print('Analysing %s' % movie)
 # movie info
 if movie == 'Aeronaut':
     nTRs=90
-    nSubj=25
+    nSubj=24
     num_events=np.arange(2,22)
     mask = 'intersect_mask_standard_firstview_all' # get just the mask of the first view participants
 elif movie == 'Mickey':
@@ -56,7 +55,7 @@ save_plot_dir = movie_eventseg_dir+'plots/'
 ####################### 
 
 def mask_roi_data(wholebrain_data,roi):
-    '''Mask whole brain data using a given ROI'''
+    #'''Mask whole brain data using a given ROI'''
     roi_data=[]
     for sub in range(wholebrain_data.shape[2]):
 
@@ -71,9 +70,9 @@ def mask_roi_data(wholebrain_data,roi):
     return roi_data
 
 def get_bestk_roi(age,roi,num_events,split=2):
-    '''Pull the numpy file that has information on the best K and maximum log likelihood for a given age group
-    the split variable tells you how the data was divided during the inner loop training (we used split half, so
-    defaults to a split value of 2)'''
+    #'''Pull the numpy file that has information on the best K and maximum log likelihood for a given age group
+    #the split variable tells you how the data was divided during the inner loop training (we used split half, so
+    #defaults to a split value of 2)'''
     all_ll_loops=np.zeros((len(num_events),nSubj//split*split))
 
     for n in range(len(num_events)):

@@ -24,7 +24,7 @@ print('Analysing %s' % movie)
 # movie info
 if movie == 'Aeronaut':
     nTRs=90
-    nSubj=25
+    nSubj=24
     roi = 'intersect_mask_standard_firstview_all' # get just the mask of the first view participants
 elif movie == 'Mickey':
     nTRs=71

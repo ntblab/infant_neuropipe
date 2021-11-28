@@ -40,8 +40,8 @@ print('Analysing %s' % movie)
 # movie info
 if movie == 'Aeronaut':
     nTRs=90
-    nSubj=25
-    roi = 'intersect_mask_standard_firstview_all' # get just the mask of the first view participants
+    nSubj=24
+    roi = 'intersect_mask_standard_firstview_all' #'intersect_mask_standard_nonlinear_all' # get just the mask of the first view participants
 elif movie == 'Mickey':
     nTRs=71
     nSubj=15
@@ -50,7 +50,7 @@ elif movie == 'Mickey':
 base_dir = os.getcwd() +'/' # script is run from infant neuropipe root
 roi_dir =  base_dir + 'data/EventSeg/ROIs/' 
 movie_eventseg_dir =  base_dir + 'data/EventSeg/%s/' % movie
-searchlight_dir = movie_eventseg_dir + 'eventseg_searchlights/'
+searchlight_dir = movie_eventseg_dir + 'eventseg_searchlights/' #'eventseg_searchlights_nonlinear/'
 optk_dir = movie_eventseg_dir +'eventseg_optk/'
 human_dir = movie_eventseg_dir + 'eventseg_human_bounds/'
 save_plot_dir = movie_eventseg_dir+'plots/' 
@@ -82,7 +82,7 @@ bcvar=[]
 # only load in the data on rank 0
 if rank ==0:
     
-    stacked_data=np.load(movie_eventseg_dir+age+'_wholebrain_data.npy')
+    stacked_data=np.load(movie_eventseg_dir+age+'_wholebrain_data.npy') # '_wholebrain_data_nonlinear.npy')
     
     #Now put them in a 4d output
     for sub in range(stacked_data.shape[2]):
@@ -117,8 +117,8 @@ sl.broadcast(bcvar)
 
 # Inner loop that will find the mean log likelihood for this n value
 def innerloop_ll(data_viewing_averaged,n,split):
-     '''Fit and test an event segmentation model with a given K value on split halves of a set of data
-    Returns the average and all log-likelihoods across different iterations'''
+    #'''Fit and test an event segmentation model with a given K value on split halves of a set of data
+    #Returns the average and all log-likelihoods across different iterations'''
     stacked_data=np.stack(data_viewing_averaged)
     
     # preset
@@ -162,7 +162,7 @@ def innerloop_ll(data_viewing_averaged,n,split):
 
 # Searchlight kernel
 def optk_kernel(data,sl_mask,myrad,bcvar):
-    '''Searchlight kernel that reshapes the data and decides whether there are enough voxels to run the algorithm'''
+    #'''Searchlight kernel that reshapes the data and decides whether there are enough voxels to run the algorithm'''
         
     num_events=bcvar[0] # so we know what we are doing
     loglik_split=bcvar[1]
