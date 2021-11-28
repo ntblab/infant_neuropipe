@@ -31,7 +31,7 @@ Some analyses, including intersubject correlation, are run within the main noteb
     - Takes as input the movie name (e.g., 'Aeronaut'), the age group whose optimal event structure is being used (e.g., 'adults'), and the age group who is being fit into this event structure (e.g., 'adults') to submit a slurm job that assesses the across-group fit by running the script `scripts/MM_EventSeg/Across_Groups_Analysis.py`
 
 **Behavioral Boundaries**
-- NOTE: These scripts require that behavioral boundaries were collected and saved to a file in the EventSeg data folder called `behavioral_boundary_events.py` This file is assumed to be a numpy array (or could be a list) consisting of the indexes for event boundaries in seconds (not TRs).
+- NOTE: These scripts require that behavioral boundaries were collected and saved to a file in the EventSeg data folder called `behavioral_boundary_events.py` This file is assumed to be a numpy array (or could be a list) consisting of the indexes for event boundaries in nTRs after shifting for the hemodynamic response
 - `scripts/MM_EventSeg/run_humanbounds_searchlight.sh`    
     - Takes as input the age group being used (e.g., 'adults'), and the subject id (e.g., '0') to submit a slurm job that finds the fit of the behavioral boundaries in searchlights in the brain by running the script `scripts/MM_EventSeg/final_scripts/HumanBounds_Searchlight.py`
 - `scripts/MM_EventSeg/run_humanbounds_bootstrapping.sh`    
