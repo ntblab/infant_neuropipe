@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Automate the analysis of PlayVideo 
+# Automate the analysis of PlayVideo (AKA movies like Mickey) 
 # Assumes you are running from the subject base directory
 
 # Step 1: Z-score data while ignoring NaNs (already done in earlier preprocessing)
@@ -37,7 +37,7 @@ fi
 # What is the folder name you want to output
 if [ $# -lt 3 ]
 then
-    movie_out_name='Mickey_TEST' # temporarily named so we don't overwrite files 
+    movie_out_name='Mickey' # temporarily named so we don't overwrite files 
 else
     movie_out_name=$3
 fi

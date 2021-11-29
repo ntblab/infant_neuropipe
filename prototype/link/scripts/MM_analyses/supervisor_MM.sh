@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Automate the transfer of MM videos to a standardised format/directory
+# Automate the transfer of MM videos (AKA videos like Pilot/Aeronaut) to a standardised format/directory
 # Assumes you are running from the subject base directory
 
 # Step 1: Z-score data while ignoring NaNs
@@ -44,7 +44,7 @@ fi
 # What is the folder name you want to output
 if [ $# -lt 3 ]
 then
-    movie_out_name='Aeronaut_TEST' # Aeronaut, temporarily named so we don't overwrite files 
+    movie_out_name='Aeronaut' # Aeronaut, temporarily named so we don't overwrite files 
 else
     movie_out_name=$3
 fi
