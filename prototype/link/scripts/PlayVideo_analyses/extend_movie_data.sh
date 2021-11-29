@@ -1,6 +1,6 @@
 #!/usr/bin/sh
 #
-# Take in a participant name (representing someone stored in group/PlayVideo/input_standard_nii/default/) and add a movies worth of data (74 TRs) to both the functional volume and to the confound regressor (and exclude all the timepoints for the second movie)
+# Take in a volume name (representing data stored in a group standard folder) and number of TRs to add two movie viewings worth of data (74 TRs * 2 for PlayVideo) to both the functional volume and to the confound regressor
 
 source ./globals.sh
 
