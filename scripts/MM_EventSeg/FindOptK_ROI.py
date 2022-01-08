@@ -33,7 +33,7 @@ print('Analysing %s' % movie)
 # movie info
 if movie == 'Aeronaut':
     nTRs=90
-    nSubj=25
+    nSubj=24
     mask = 'intersect_mask_standard_firstview_all' # get just the mask of the first view participants
 elif movie == 'Mickey':
     nTRs=71
@@ -56,7 +56,7 @@ save_plot_dir = movie_eventseg_dir+'plots/'
 
 # get the ROI data from the whole brain data
 def mask_roi_data(wholebrain_data,roi):
-    '''Mask whole brain data using a given ROI'''
+    #'''Mask whole brain data using a given ROI'''
     roi_data=[]
     for sub in range(wholebrain_data.shape[2]):
 
@@ -72,8 +72,8 @@ def mask_roi_data(wholebrain_data,roi):
 
 # Inner loop that will find the log likelihood for this n value
 def innerloop_ll(data,n,split):
-    '''Fit and test an event segmentation model with a given K value on split halves of a set of data
-    Returns the average and all log-likelihoods across different iterations'''
+    #'''Fit and test an event segmentation model with a given K value on split halves of a set of data
+    #Returns the average and all log-likelihoods across different iterations'''
     stacked_data=np.stack(data)
     
     #preset

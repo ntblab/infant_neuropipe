@@ -8,7 +8,7 @@
 #SBATCH --mem-per-cpu 25G        # memory limit
 #SBATCH -n 5        # how many cores to use
 
-# Load the modules
+# Set up the environment
 source globals.sh
 
 age=$1

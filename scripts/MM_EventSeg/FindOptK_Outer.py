@@ -11,7 +11,6 @@ import numpy as np
 import pandas as pd
 import sys
 import os
-from brainiak import isfc
 from brainiak.fcma.util import compute_correlation
 import brainiak.funcalign.srm
 from scipy import stats
@@ -34,7 +33,7 @@ print('Analysing %s' % movie)
 # movie info
 if movie == 'Aeronaut':
     nTRs=90
-    nSubj=25
+    nSubj=24
     mask = 'intersect_mask_standard_firstview_all' # get just the mask of the first view participants
 elif movie == 'Mickey':
     nTRs=71
@@ -55,7 +54,7 @@ save_plot_dir = movie_eventseg_dir+'plots/'
 
 # get the ROI data from the whole brain data
 def mask_roi_data(wholebrain_data,roi):
-    '''Mask whole brain data using a given ROI'''
+    #'''Mask whole brain data using a given ROI'''
     roi_data=[]
     for sub in range(wholebrain_data.shape[2]):
 
@@ -71,7 +70,7 @@ def mask_roi_data(wholebrain_data,roi):
 
 # roll the data randomly or using a given shift value to create a permutation 
 def create_roll(data,determined_shift=None):
-    '''Shifts data either a random value (when determined_shift: 'None') or shifts the given amount'''
+    #'''Shifts data either a random value (when determined_shift: 'None') or shifts the given amount'''
     rolled_data=data.copy()
     for sub in range(len(data)):
         if determined_shift==None:
@@ -86,9 +85,9 @@ def create_roll(data,determined_shift=None):
 
 # test reliability of optK found from inner loop
 def testreliability_ll(data,leftout_sub,k,nTRs):
-    '''Fit an event segmentation model with a given K value on a set of data, while holding out one participant for testing
-    Returns the log-likelihood for the held out participants' actual data and z-statistic noting the distance
-    between the actual log-likelihood and the permutation distribution'''
+    #'''Fit an event segmentation model with a given K value on a set of data, while holding out one participant for testing
+    #Returns the log-likelihood for the held out participants' actual data and z-statistic noting the distance
+    #between the actual log-likelihood and the permutation distribution'''
     stacked_data=np.stack(data)
     
     train_ids=np.delete(np.arange(len(data)),leftout_sub)
