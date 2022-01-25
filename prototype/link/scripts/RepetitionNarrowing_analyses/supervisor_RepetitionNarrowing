@@ -1,0 +1,167 @@
+#!/bin/bash
+#
+# Automate the analysis of Repetition Narrowing
+#
+# This script first sets up all of the fsf files for analysis
+# Then the script runs the feat analyses for repetition suppression
+# Do the z scoring of the data
+# Finally, wait and then do the alignment of the statistics to the highres and standard.
+#
+# Assumes you are running from the subject base directory
+#
+# C Ellis 070318 
+#
+# Modified T Yates 03042019 
+#
+# Now reference different secondlevel folders 
+#
+# More revisions 05282020
+
+#SBATCH --output=RepetitionNarrowing_Supervisor-%j.out
+#SBATCH -p psych_day
+#SBATCH -t 3:00:00
+#SBATCH --mem 16000
+
+# Source the globals
+source ./globals.sh
+	
+# What is the root directory for the subject
+subject_dir=$(pwd)
+
+# Different analyses types that are used
+analysis_types=('human_pairs' 'sheep_pairs' 'scene_face' 'default')
+
+for analysis_type in ${analysis_types[@]}
+do 
+	echo 'running analyses on:' $analysis_type
+
+	# What is the path to RepetitionNarrowing
+	RepetitionNarrowing_path=analysis/secondlevel_RepetitionNarrowing/${analysis_type}/
+
+	# What is the nifti file being used
+	nifti_Z=NIFTI/func2highres_RepetitionNarrowing_Z.nii.gz
+
+	### Before running feats, remember to combine the timing files for the star and the VPC
+	if [ ! -e ${RepetitionNarrowing_path}/Timing/RepetitionNarrowing-All_VPC_Events.txt ]
+	then
+		matlab -nodesktop -nosplash -nodisplay -jvm -r "addpath('scripts/RepetitionNarrowing_analyses/'); add_repnarrow_vpc_timing('$analysis_type','')"
+	fi
+
+	sleep 30s # wait just in case
+
+	### Run the feats
+	TR_Number=`fslval ${RepetitionNarrowing_path}${nifti_Z} dim4`
+	fsl_data=`which fsl`
+	fsl_data=${fsl_data%bin*}
+	fsl_data=$fsl_data/data/standard/
+
+	# Run the feat analysis
+
+	if [ ! -e ${RepetitionNarrowing_path}/RepetitionNarrowing.feat/stats/zstat1.nii.gz ]
+	then
+		rm -rf ${RepetitionNarrowing_path}/RepetitionNarrowing.feat/
+		
+		# Which template you want depends on the secondlevel folder
+		if [[ $analysis_type == 'default' ||  $analysis_type == 'all_balance' ]]
+		then
+			fsf_template=fsf/RepetitionNarrowing.fsf.template
+		else
+			fsf_template=fsf/RepetitionNarrowing_${analysis_type}.fsf.template
+		fi
+		
+
+		fsf_output=${RepetitionNarrowing_path}/RepetitionNarrowing.fsf
+		high_pass_cutoff=100 # Use a temporary value that you will overwrite
+	
+		#Replace the <> text (excludes the back slash just before the text) with the other supplied text
+
+		# note: the following replacements put absolute paths into the fsf file. this
+		#       is necessary because FEAT changes directories internally
+		cat $fsf_template \
+		| sed "s:<?= \$SUBJECT_PATH ?>:$subject_dir:g" \
+		| sed "s:<?= \$STANDARD_DIR ?>:$fsl_data:g" \
+		| sed "s:<?= \$TR_DURATION ?>:$TR:g" \
+		| sed "s:<?= \$TR_NUMBER ?>:$TR_Number:g" \
+		| sed "s:<?= \$HIGH_PASS_CUTOFF ?>:$high_pass_cutoff:g" \
+		| sed "s:<?= \$ANALYSIS_TYPE ?>:$analysis_type:g" \
+			> ${subject_dir}/temp_RepetitionNarrowing.fsf #Output to this file
+
+		# Determine the high pass cut off and make the proper fsf file
+		# Make the relevant design files
+		feat_model ${subject_dir}/temp_RepetitionNarrowing
+
+		# Input the design matrix into the feat
+		high_pass_cutoff=`cutoffcalc --tr=$TR -i ${subject_dir}/temp_RepetitionNarrowing.mat`
+
+		# in case of errors ? 
+		high_pass_cutoff=`echo $high_pass_cutoff | awk '{print $NF}'`
+	
+		cat $fsf_template \
+		| sed "s:<?= \$SUBJECT_PATH ?>:$subject_dir:g" \
+		| sed "s:<?= \$STANDARD_DIR ?>:$fsl_data:g" \
+		| sed "s:<?= \$TR_DURATION ?>:$TR:g" \
+		| sed "s:<?= \$TR_NUMBER ?>:$TR_Number:g" \
+		| sed "s:<?= \$HIGH_PASS_CUTOFF ?>:$high_pass_cutoff:g" \
+		| sed "s:<?= \$ANALYSIS_TYPE ?>:$analysis_type:g" \
+			> ${fsf_output} #Output to this file
+	
+		sbatch scripts/run_feat.sh $fsf_output
+		sleep 1m # force a wait
+	
+		# Remove all the temp files associated with the design matrix
+		rm -f temp_RepetitionNarrowing.*
+	fi
+
+	## Wait until FEATs have finished and then run the z scored versions
+
+	# Check if it is done
+	waiting=1
+	while [[ $waiting -eq 1 ]] 
+	do 
+		if  [[ -e ${subject_dir}/${RepetitionNarrowing_path}/RepetitionNarrowing.feat/stats/zstat1.nii.gz ]]
+		then
+			waiting=0
+		else
+			sleep 20s
+		fi
+	done	
+
+	# Run the z scoring
+	if [ ! -e ${RepetitionNarrowing_path}/RepetitionNarrowing_Z.feat/stats/zstat1.nii.gz ]
+	then
+		rm -rf ${RepetitionNarrowing_path}/RepetitionNarrowing_Z.feat/
+		sbatch ${subject_dir}/scripts/FEAT_stats.sh ${subject_dir}/${RepetitionNarrowing_path}/RepetitionNarrowing.feat ${subject_dir}/${RepetitionNarrowing_path}/RepetitionNarrowing_Z.feat ${subject_dir}/${RepetitionNarrowing_path}/${nifti_Z}
+	fi	
+
+	# Put in a longer wait before making the registration files
+	sleep 5m
+
+	# Now make the images       
+	feat_dir=${subject_dir}/${RepetitionNarrowing_path}/RepetitionNarrowing_Z.feat/
+
+	zstat_file_num=`ls $feat_dir/stats/zstat?.nii.gz $feat_dir/stats/zstat??.nii.gz | wc -l`
+	zstat_std_file_num=`ls $feat_dir/stats/zstat?_registered_standard.nii.gz $feat_dir/stats/zstat??_registered_standard.nii.gz | wc -l`
+
+	if [ $zstat_file_num -ne $zstat_std_file_num ]
+	then
+		# Remove files that might have been created earlier by align_stats
+		rm -f ${feat_dir}/stats/zstat?_*
+		rm -f ${feat_dir}/stats/zstat??_*
+		rm -f ${feat_dir}/stats/*png
+
+		# Set the parameters
+		zstat_files=`ls ${feat_dir}/stats/zstat*`
+		zmin=2.3
+		zmax=3
+
+		# Iterate through the zstat maps that were created
+		for stat_maps in $zstat_files
+		do
+			${subject_dir}/scripts/align_stats.sh $stat_maps $zmin $zmax 1
+
+		done
+	fi
+
+done
+
+exit
