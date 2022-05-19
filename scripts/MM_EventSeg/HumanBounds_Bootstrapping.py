@@ -16,6 +16,7 @@ import time
 import glob
 
 age=sys.argv[1] # which age group?
+analysis_type=sys.argv[2] # which type of analysis? (could be default '', alternative approach '_alt', or distance correlation '_distance')
 
 # The movie we are using is Aeronaut 
 movie='Aeronaut'
@@ -50,7 +51,7 @@ coords= np.where(brain_nii.get_data())
 
 
 # Get the data files created using the HumanBounds_Searchlight.py script 
-file_location=human_dir+'/*%s*sub*bounds.nii.gz' % (age)
+file_location=human_dir+'/*%s*sub*bounds%s.nii.gz' % (age,analysis_type)
 print(glob.glob(file_location))
 data_files=glob.glob(file_location)
 
@@ -81,5 +82,5 @@ for vox in range(brain_data.shape[1]):
 z_nii=brain_masker.inverse_transform(np.array(z_scores))
 
 # Save!! 
-output_name=human_dir+'%s_avg_zscores.nii.gz' % age
+output_name=human_dir+'%s_avg_zscores%s.nii.gz' % (age, analysis_type)
 nib.save(z_nii,output_name)
