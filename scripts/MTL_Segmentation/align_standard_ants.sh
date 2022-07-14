@@ -28,15 +28,15 @@ output_prefix=$ants_dir/highres2infant_standard_
 adult_standard=$fsl_data/MNI152_T1_1mm.nii.gz
 
 # Where will this data go
-out_dir==$PROJ_DIR/data/MTL_Segmentations_ANTs/
+out_dir=$PROJ_DIR/data/MTL_Segmentations/
 
 # Get the input and output names, which depends on the coder
 if [[ $coder == CE ]]
 then
-input_seg=`ls data/masks/${SUBJ}*-CE.nii.gz`
+input_seg=`ls data/MTL_Segmentations/segmentations_anatomical/${SUBJ}*-CE.nii.gz`
 out_name=${input_seg#*masks/}
 else
-input_seg=`ls ../../data/MTL_Segmentations_JF/${SUBJ}*.gz`
+input_seg=`ls ../../data/MTL_Segmentations/segmentations_anatomical/${SUBJ}*-JF.nii.gz`
 out_name=${input_seg#*Segmentations_JF/}
 fi
 

@@ -6,7 +6,7 @@ cd subjects/$SUBJ
 
 source globals.sh
 
-output=$PROJ_DIR/data/MTL_Segmentations/freesurfer_unhashed/$SUBJ.nii.gz
+output=$PROJ_DIR/data/MTL_Segmentations/segmentations_freesurfer/$SUBJ.nii.gz
 
 # Check if file exists
 if [ -e $output ]

@@ -34,8 +34,8 @@ os.chdir(curr_dir) # Come back
 
 out_dir = base_dir + '/data/MTL_Segmentations/'
 
-# Path containing the segmentations of the participants in their native anatomical space.  
-out_dir_segmentations_anatomical = '%s/segmentations_anatomical/' % out_dir
+# Path containing the segmentations of the participants in standard space.  
+out_dir_segmentations_anatomical = '%s/segmentations_nonlinear/' % out_dir
 
 # Returns the name of the participant in the format of sXXXX_X_X
 def participant_namer(file_path):

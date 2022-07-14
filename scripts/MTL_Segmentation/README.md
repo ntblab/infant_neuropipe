@@ -4,7 +4,7 @@ This document outlines the analyses used in the manuscript titled "Automated and
 
 If you wish to run the notebook and reproduce the results from the paper, then the code here is sufficient. However, to generate new segmentations with our existing ASHS models or generate your own, you will need the ASHS software. For an overview, refer to this [website](https://sites.google.com/site/hipposubfields/building-an-atlas) written by the original creators of ASHS. 
 
-The first step is to download the latest release of the [ASHS software package](https://github.com/pyushkevich/ashs/tree/fastashs), making sure to clone the fast-ashs package. We recommend this Github method, rather than alternatives, because this guarantees the latest version. We used the version from XX/XX/XX for the analyses reported here.
+The first step is to download the latest release of the [ASHS software package](https://github.com/pyushkevich/ashs/tree/fastashs), making sure to clone the fast-ashs package. We recommend this Github method, rather than alternatives, because this guarantees the latest version. We used the version from 04/27/22 for the analyses reported here.
 
 ________________________________
 
