@@ -6,8 +6,9 @@
 % This combines the motion parameters and motion confounds
 %
 % C Ellis 2/23/19
+% allow suffix 02/22
 
-function prep_concatenate_confounds(functional_run, confound_dir, fslmotion_threshold, useRMSThreshold, mahal_threshold, useExtendedMotionParameters, useExtended_Motion_Confounds)
+function prep_concatenate_confounds(functional_run, confound_dir, fslmotion_threshold, useRMSThreshold, mahal_threshold, useExtendedMotionParameters, useExtended_Motion_Confounds, suffix)
 
 % Convert to a string so you can deal with decimals
 if fslmotion_threshold == round(fslmotion_threshold)
@@ -64,13 +65,14 @@ if useExtended_Motion_Confounds==1 && logical(isstr(mahal_threshold) || mahal_th
 end
 
 %Write this confound matrix out
-original_confound_name=sprintf('%s/OverallConfounds_functional%s_original.txt', confound_dir, functional_run);
+original_confound_name=sprintf('%s/OverallConfounds_functional%s%s_original.txt', confound_dir, functional_run, suffix);
+fprintf('suffix, %s\n\n',suffix)
 dlmwrite(original_confound_name, OverallConfound_Mat, '\t');
 
 fprintf('Decorrelating motion parameters\n\n')
 
 %Decorrelate the components if appropriate
-motion_decorrelator(original_confound_name, sprintf('%s/OverallConfounds_functional%s.txt', confound_dir, functional_run));
+motion_decorrelator(original_confound_name, sprintf('%s/OverallConfounds_functional%s%s.txt', confound_dir, functional_run, suffix));
 
 % If this is empty still then just set it to zero to make it easier
 % for comparison
@@ -79,5 +81,5 @@ if isempty(Confound_Mat)
 end
 
 % Store the confounds of interest
-only_confound_name=sprintf('%s/MotionConfounds_functional%s.txt', confound_dir, functional_run);
+only_confound_name=sprintf('%s/MotionConfounds_functional%s%s.txt', confound_dir, functional_run,suffix);
 dlmwrite(only_confound_name, Confound_Mat, '\t');
