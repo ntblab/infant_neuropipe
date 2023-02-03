@@ -28,7 +28,15 @@ This portion of the notebook sets up the modules, defines the file paths contain
 - Hippocampal IRR
 
     - Calculates the Dice values between the 42 corresponding participants that CE and JF segmented, generating a hippocampal IRR metric
+    
+- Hippocampal Intra-Rater Reliability  
 
+    - We used Dice to compare the manual segmentations of scans (from the two tracers) coming from a subset of 10 infants who had two anatomical scans from the same session.  
+    
+- Hippocampal ICC 
+
+    - The reliability of our manual segmentation approach was further evaluated by computing intra-class correlation (ICC) for each region. ICC was calculated using the (2,1) absolute agreement of single measures method. 
+    
 - Repeat Analysis 
 
     - Runs a repeat analysis, comparing segmentations from the same participant aligned both linearly and nonlinearly to standard space
@@ -63,6 +71,14 @@ This portion of the notebook sets up the modules, defines the file paths contain
 
     - Calculates the Dice values between the 42 corresponding participants that CE and JF segmented, generating a MTL IRR metric
     
+- MTL Intraclass Correlation
+
+    - The reliability of our MTL segmentations were further evaluated by computing ICC for each region using the (2,1) absolute agreement of single measures method.  
+    
+- SNR Analysis
+
+    - In order to investigate the extent to which the quality of a scan correlates with reliability, we calculated the signal-to-noise ratio (SNR) for each of our 42 anatomical scans as the mean intensity signal of hippocampal voxels on a centroid axial slice divided by the standard deviation of all non-brain voxels contained within that same slice. This allowed us to examine the relationship between SNR and (1) participant age, (2) IRR, and (3) predictions from Infant-Trained-ASHS. 
+
 - Repeat vs Control Analysis
  
     - A fully-fleshed out version of the repeat analysis discussed above, in which we compare our repeat Dice values (HPC and MTL) acquired from both linearly and nonlinearly aligned participants with control Dice values
@@ -82,6 +98,10 @@ This portion of the notebook sets up the modules, defines the file paths contain
 - LOPO-ASHS Bland-Altman Plots 
     
     - Generates the bias plots used to quantify the extent to which the volume of the hippocampus was over- or under-estimated by the LOPO-ASHS models
+    
+- ASHS Iterations Analyses
+
+    - We investigated how the reliability of ASHS changes as a function of the number of tracing examples provided during training.  
 ________________________________
 
 
@@ -165,5 +185,8 @@ ________________________________
 - `scripts/MTL_Segmentation/construct_intersects.py`: 
 
     - This code generates segmentations that are the intersection of the manual segmentations from the two tracers (i.e., segmentations that represent the voxels shared between tracers). These were considered "optimal" segmentations in the manuscript because every voxel in the intersection is by definition guaranteed to match between tracers, ensuring a maximally high IRR while still maintaining a high within-tracer reliability. 
+    
+- `scripts/MTL_Segmentation/calculate_SNR.py`: 
 
-
+    - This code calculates the signal-to-noise ratio (SNR) for each of our 42 anatomical scans as the mean intensity signal of hippocampal voxels on a centroid axial slice divided by the standard deviation of all non-brain voxels contained within that same slice.   
+    

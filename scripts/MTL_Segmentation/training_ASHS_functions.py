@@ -252,8 +252,54 @@ def manifest_file_maker_two_tracers(ASHS_dir, LOP=False):
             
             # Close the file
             File_object.close()       
-        
 
+            
+# Generates the manifest files used for training ASHS with one tracer
+def manifest_file_maker_iteratios(ordered_files_segmentations, ASHS_dir, tracer_name, ASHS_dir_LOP=0, LOP=False):
+            
+      
+    # Collect the names of the 42 participant scans using the previously made function
+    ppt_names = []
+    files_segmentations_anatomical_CE = sorted(glob.glob(out_dir_segmentations_anatomical + '*CE.nii.gz'))
+    for file_name in files_segmentations_anatomical_CE:
+        ppt_name = ppt_namer(file_name)
+        ppt_names += [ppt_name]
+
+    iterations = [1, 2, 3]
+
+    for iteration in iterations:
+
+        # Set the seed
+        np.random.seed(iteration)
+
+        # Set our iterations 
+        subsamples = [41, 21, 11, 7]
+
+        # Loop through each iteration
+        for subsample in subsamples:
+
+            # Store a random subsampling of the ppt_names in a list
+            np.random.shuffle(ppt_names)
+
+            subsample_ppt_names = ppt_names[:subsample]
+
+    ## We are now going to treat "iterative_ppt_names" as if this is our full sample, and create Manifest Files accordingly ##
+
+            for loo_ppt in list(subsample_ppt_names):
+
+                File_object = open(out_dir + '/ASHS_%s_%s/%s_Manifest_File.txt' %(subsample, iteration, loo_ppt), "w+")
+
+                for ppt in list(subsample_ppt_names):
+
+                    if loo_ppt != ppt:
+
+                        # Make the manifest file with paths to subject ID, T1-weighted MRI scan in NIFTI format, and left/right segmentations in NIFTI format
+                        File_object.write('\n%s %s/%s.nii.gz %s/%s.nii.gz %s/participant_files_ASHS/%s_%s_Left_Side.nii.gz %s/participant_files_ASHS/%s_%s_Right_Side.nii.gz' % (ppt, out_dir_anatomicals, ppt, out_dir_anatomicals, ppt, out_dir, ppt, tracer_name, out_dir, ppt, tracer_name))
+
+                File_object.close()
+
+               
+                                                                           
 segmentation_dir = 'segmentations_CE_ASHS' # Set this string equal to the name of the segmentation directory you want to move the segmentations to, this is CE's segmentation directory as an example
 
 # Loop through the segmentation file lists of one of the tracers (doesn't matter which)
