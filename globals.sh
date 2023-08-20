@@ -24,6 +24,7 @@ LONG_PARTITION=verylong # Partition for jobs >24 hours
 # Load BXH_XCEDE tools (tested on 1.11.14)
 # Load brainiak (tested on 0.7.1)
 # Load nilearn (tested on 0.4.0)
+# Load ANTs (tested on 2.3.1-foss-2018a)
 
 ##############################
 

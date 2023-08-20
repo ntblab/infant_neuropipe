@@ -10,7 +10,7 @@
 # To edit the defaults find the section within the 'run' loop called 'SET DEFAULTS HERE' 
 #
 # Edited by C Ellis 0616. Added the functionality to make a template for each functional. Inputs are the paths to the standards
-
+# Edited T Yates 0222 to allow for different motion confounds 
 
 set -e
 
@@ -58,10 +58,16 @@ else
 fi
 
 # If a suffix is that you are doing this on pseudorun files then refer to a different folder for the nifti files
-if [[ $suffix == "pseudorun" ]]
+if [[ $suffix == *"pseudorun"* ]]
 then
 	NIFTI_DIR=analysis/firstlevel/pseudorun/
-	suffix="" # Delete evidence of this suffix now
+    pseudo='pseudorun' 
+    
+    # now get rid of the pseudo aspect of it 
+    suffix=$(echo $suffix | sed "s/${pseudo}_//")
+    suffix=$(echo $suffix | sed "s/_${pseudo}//")
+    suffix=$(echo $suffix | sed "s/${pseudo}//")
+ 
 fi
 
 #What are the file names?
@@ -101,7 +107,13 @@ do
 	despiking=1  # Should 3dDespike be used on the data
 	melodic=0  # Should melodic be run on the data
 	ica_corr_thresh=0.5  # If melodic is run on the data, what threshold should you use for excluding components that are correlated with motion
-	
+    
+    fslmotion_threshold=3
+    PCA_threshold=0
+    
+	DefaultConfound_file=${subject_dir}/analysis/firstlevel/Confounds/OverallConfounds_${RunName}.txt
+    DefaultExample_Func=${subject_dir}/analysis/firstlevel/Confounds/example_func_${RunName}.nii.gz   
+    motionparameter_file=${subject_dir}/analysis/firstlevel/Confounds/MotionParameters_standard_${RunName}.par
 	######################################
 
 	### Overwrite the default parameters based on the 
@@ -163,9 +175,52 @@ do
 		interpolation=${interpolation%%_*}
 		echo Setting interpolation to $interpolation
 	fi
-	
+	if [[ $suffix == *"_fslmotion_thr"* ]]
+	then
+		fslmotion_threshold=${suffix#*thr}
+        fslmotion_threshold=${fslmotion_threshold%%_*}
+        echo Setting motion threshold to $fslmotion_threshold
+	fi
+
+    # Confirm what the confound files and example func are based on the fsl motion confounds
+	if [ $fslmotion_threshold != 3 ]
+	then
+		
+        files=(${subject_dir}/analysis/firstlevel/Confounds/example_func_${RunName}_TR_*_mahal_threshold_${PCA_threshold}_fslmotion_threshold_${fslmotion_threshold}.nii.gz)
+        if [ -e "${files[0]}" ] 
+        then
+            # What example func are you using? 
+            example_func_file=`ls ${files}`
+
+            # Check whether there are multiple functionals (shouldn't be?)
+            num_funcs=( $example_func_file )
+            num_funcs=${#num_funcs[@]}
+
+            if [ $num_funcs -gt 1 ]
+            then
+                echo Found multiple example funcs, quiting
+                exit
+            fi
+
+            #  What is the confound file you will use?           
+            OverallConfound_file=${subject_dir}/analysis/firstlevel/Confounds/OverallConfounds_${RunName}${suffix}.txt
+       else
+          OverallConfound_file=''
+          echo Did not find $files, so not creating an fsf template for $RunName
+          continue
+       fi
+       
+	else
+		
+        # What example func are you using? 
+        example_func_file=$DefaultExample_Func
+        
+        # What is the confound file you will use? 
+        OverallConfound_file=$DefaultConfound_file
+    fi
+        
 	### Get run specific information
-	
+    
 	#Find the TR length and the number of TRs
 	TR_Duration=`fslval $NIFTI_DIR/${SUBJ}_${RunName}.nii.gz pixdim4`
 	TR_Number=`fslval $NIFTI_DIR/${SUBJ}_${RunName}.nii.gz dim4`
@@ -204,8 +259,8 @@ do
 		| sed "s:<?= \$ICA_CORR_THRESH ?>:$ica_corr_thresh:g" \
 		| sed "s:<?= \$STANDARD_BRAIN ?>:$standard_brain:g" \
 		| sed "s:<?= \$DATA_FILE_PREFIX ?>:$subject_dir/$data_file_prefix:g" \
-		| sed "s:<?= \$EXAMPLE_FUNC_FILE ?>:$subject_dir/$PRESTATS_DIR/Confounds/example_func_${RunName}.nii.gz:g" \
-		| sed "s:<?= \$CONFOUND_FILE ?>:$subject_dir/$PRESTATS_DIR/Confounds/OverallConfounds_${RunName}.txt:g" \
+		| sed "s:<?= \$EXAMPLE_FUNC_FILE ?>:$example_func_file:g" \
+		| sed "s:<?= \$CONFOUND_FILE ?>:$OverallConfound_file:g" \
 		| sed "s:<?= \$HIGHRES_FILE ?>:$highres_file:g" \
 			> $output_fsf #Output to this file
 	else
@@ -214,10 +269,22 @@ do
 done
 
 # Make a copy of the original (albeit masked) highres in secondlevel for use later
-highres_original=${highres_file%_*}_masked.nii.gz
+#highres_original=${highres_file%_*}_masked.nii.gz
+highres_original=$highres_file
 if [ -e $highres_original ]
 then
  cp $highres_original $REGCONCAT_DIR/highres_original.nii.gz
+ 
+ # delete this line if it exists (won't do anything if it doesn't)
+ sed -i "/# highres_original:/d" $subject_dir/run-order.txt
+ 
+ # find the last line of the instructions, and then add 1
+ line=`sed -n "/# EXAMPLE RUN ORDER FOLLOWS. CUSTOMIZE THIS TO YOUR PROJECT/=" $subject_dir/run-order.txt`
+ line=$((line+1))
+ 
+ # add this information to that next line
+ sed -i "${line}i # highres_original: ${highres_file##*nifti/}" $subject_dir/run-order.txt
+ 
 else
  echo "Could not find $highres_original. Not saving as $REGCONCAT_DIR/highres_original.nii.gz"
 fi

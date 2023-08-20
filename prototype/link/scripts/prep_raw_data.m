@@ -79,6 +79,7 @@
 % has a border for TRs where there is movement.
 %
 % First created by C Ellis 2/22/17
+% Small changes to allow for multiple types of confound files TY 02/2022
 
 function prep_raw_data(StepsRun, FunctionalRuns, Burn_In_TRs, varargin)
 
@@ -128,6 +129,8 @@ TR=str2num(globals_struct.TR); % How many seconds is each volume acquistion. Thi
 % Get all the default values
 prep_set_defaults
 
+suffix=''; % default to no suffix
+
 % Read in the inputs, starting from the 4th, and allow those values to be
 % set. Allows us to update the default values above 
 input_counter=3;
@@ -176,13 +179,15 @@ while nargin > input_counter
         useExtended_Motion_Confounds=var_value; %Do you want to look for stripping in the planes of a volume and exclude based on that?
     elseif strcmp(var_name, 'data_dir')
         data_dir=varargin{input_counter-1}; % Do you want to specify the data directory (can be useful if trying to run this on pseudorun data)
+    elseif strcmp(var_name, 'suffix')
+        suffix=varargin{input_counter-1}; %What is the suffix that you will use for confound files?
     else
         warning('The variable name %s was not found. Aborting', var_name);
         return;
     end
     
     % Store the conditions
-    if ~strcmp(var_name, 'data_dir')
+    if ~strcmp(var_name, 'data_dir') && ~strcmp(var_name, 'suffix')
         conditions=[conditions, '_', var_name, '_', num2str(var_value)];
     end
     
@@ -445,10 +450,10 @@ if ~isempty(find(StepsRun==8))
         
         %Get the names necessary
         functional=[data_dir, functionals(functionalCounter).name];
-        functional_run=functional(strfind(functional, 'functional')+10:strfind(functional, 'functional')+11);
+        functional_run=functional(strfind(functional, 'functional')+10:strfind(functional, '.nii.gz')-1);
         
         % Concatenate the files from this analysis
-        prep_concatenate_confounds(functional_run, confound_dir, fslmotion_threshold, useRMSThreshold, mahal_threshold, useExtendedMotionParameters, useExtended_Motion_Confounds)
+        prep_concatenate_confounds(functional_run, confound_dir, fslmotion_threshold, useRMSThreshold, mahal_threshold, useExtendedMotionParameters, useExtended_Motion_Confounds, suffix)
         
     end
 end
@@ -461,9 +466,9 @@ if ~isempty(find(StepsRun==9))
         
         %Get the names necessary
         functional=[data_dir, functionals(functionalCounter).name];
-        functional_run=functional(strfind(functional, 'functional')+10:strfind(functional, 'functional')+11);
+        functional_run=functional(strfind(functional, 'functional')+10:strfind(functional, '.nii.gz')-1);
 
-        confound_name=sprintf('%s/OverallConfounds_functional%s.txt', confound_dir, functional_run);
+        confound_name=sprintf('%s/OverallConfounds_functional%s%s.txt', confound_dir, functional_run, suffix);
         
         % Only run if the confound file exists
         if exist(confound_name)==2
@@ -498,7 +503,7 @@ if ~isempty(find(StepsRun==9))
             % Save the volume you just made
             nii.img=volume;
             nii.hdr.dime.dim(5)=size(volume,4);
-            save_untouch_nii(nii, sprintf('%s/Excluded_TRs_functional%s.nii.gz', confound_dir, functional_run))
+            save_untouch_nii(nii, sprintf('%s/Excluded_TRs_functional%s%s.nii.gz', confound_dir, functional_run, suffix))
             
             %Make plot of the to be excluded TRs next to the preceeding TRs
             %(limit to 4 TRs per plot)
@@ -553,7 +558,7 @@ if ~isempty(find(StepsRun==9))
                 
                 suptitle(sprintf('Preceding (left), excluded (middle) and following (right) TRs\nrun %d part %d', functionalCounter,  plots))
                 
-                savename=sprintf('%s/Excluded_TRs_functional%s_part_%d.png', confound_dir, functional_run, plots)
+                savename=sprintf('%s/Excluded_TRs_functional%s%s_part_%d.png', confound_dir, functional_run, suffix, plots)
                 saveas(gcf, savename);
                 
             end

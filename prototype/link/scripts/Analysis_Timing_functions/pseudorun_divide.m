@@ -73,6 +73,11 @@ if pseudorun_criteria > 0
         
         fprintf('\n\n&&!!!&&&!!!&&&!!!&&&!!!&&&!!!&&&!!!&&\n&&&                               &&&\n&&& Performing pseudorun analysis &&&\n&&&                               &&&\n&&!!!&&&!!!&&&!!!&&&!!!&&&!!!&&&!!!&&\n\n')
         
+        % First we will want to update the run-burn in for the first
+        % pseudorun so it can be used in the new fsf files
+        warning('Burn in for the first pseudorun is %d. This is being updated in the run_burn_in.txt file', first_block_burn_in)
+        fprintf(Run_BurnIn_fid, sprintf('functional%02d%s %d\n', Functional_Counter, char('a' + size(pseudorun_timestamps, 1)), first_block_burn_in));
+        
         % Determine the last block of the Experiment before the change
         next_pseudorun_onset = -1 * first_block_burn_in * TR ; % Start the run at the
         for block_counter = 1:size(Blocks,1)
@@ -259,7 +264,7 @@ for pseudorun_counter = 1:num_pseudoruns
     prep_select_centroid_TR(output_nifti, sprintf('%02d%s', Functional_Counter, pseudorun_letter), output_confound_dir, pseudorun_burnin(pseudorun_counter), useRMSThreshold, fslmotion_threshold, mahal_threshold, useCentroidTR, Loop_Centroid_TR, pca_components, '');
     
     % Concatenate the timing files as appropriate
-    prep_concatenate_confounds(sprintf('%02d%s', Functional_Counter, pseudorun_letter), output_confound_dir, fslmotion_threshold, useRMSThreshold, mahal_threshold, useExtendedMotionParameters, useExtended_Motion_Confounds);
+    prep_concatenate_confounds(sprintf('%02d%s', Functional_Counter, pseudorun_letter), output_confound_dir, fslmotion_threshold, useRMSThreshold, mahal_threshold, useExtendedMotionParameters, useExtended_Motion_Confounds,'');
 
     % Return the figure that was used here
     figure(current_fig);

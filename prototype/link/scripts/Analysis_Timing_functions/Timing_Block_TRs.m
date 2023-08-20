@@ -103,10 +103,34 @@ if BurnIn==1
     %Report this
     fprintf('\nBurn In detected, %d TRs labelled\n', Run_BurnInTRNumber);
     
-    % If this is not 3 then throw an error
-    if Run_BurnInTRNumber~=3
-        warning('Burn is not 3 for run %d but is instead %d. Rerunning the prep_raw_data with the appropriate burn in and then storing this run information for render-fsf-template. Note that if this is done unnecessarily then it will have flow on effects that are hard to detect. To overwrite, you need to rerun prep_raw_data with the correct parameters\n\n', Functional_Counter, Run_BurnInTRNumber);
+    % Check if the burn in you have detected 
+    % is what was previously specified (i.e., what is used in the fsf file)
+    fsf_file = sprintf('./analysis/firstlevel/functional%02d.fsf', Functional_Counter);
+    if exist(fsf_file) > 0
+          
+        %quickly read the file
+        file_lines=regexp(fileread(fsf_file),'\n','split');
+        burn_in_line=file_lines(~cellfun(@isempty,strfind(file_lines,'fmri(ndelete)')));
+        burn_in_line=burn_in_line{1};
+        Previous_BurnInTRNumber=str2double(burn_in_line(strfind(burn_in_line, '(ndelete)')+10:end));
+          
+    % if this file doesn't yet exist, just use the default burn in TR 
+    else
+        Previous_BurnInTRNumber=Default_BurnInTRNumber;
+    end
+    
+    % If current run burn in is not the same as before, then you need to be warned and rerun prep_raw_data
+    if Run_BurnInTRNumber~=Previous_BurnInTRNumber
         
+        % If this is not 3 then throw an error
+        if Run_BurnInTRNumber~=Default_BurnInTRNumber
+            warning('Burn in for run %d is not %d but is instead %d. Rerunning the prep_raw_data with the appropriate burn in and then storing this run information for render-fsf-template. Note that if this is done unnecessarily then it will have flow on effects that are hard to detect. To overwrite, you need to rerun prep_raw_data with the correct parameters\n\n', Functional_Counter, Default_BurnInTRNumber, Run_BurnInTRNumber);
+        
+        % Alternatively it might be 3 but you were wrong before
+        else
+            warning('Burn in for run %d is %d but was previously detected as %d. Rerunning the prep_raw_data with the appropriate burn in and then storing this run information for render-fsf-template. Note that if this is done unnecessarily then it will have flow on effects that are hard to detect. To overwrite, you need to rerun prep_raw_data with the correct parameters\n\n', Functional_Counter, Run_BurnInTRNumber, Previous_BurnInTRNumber);
+        end
+    
         % Make sure you don't mess with the figures
         timecourse_fig=gcf;
         figure;
@@ -117,17 +141,13 @@ if BurnIn==1
         % Return to original time course figure
         figure(timecourse_fig);
         
-        % Write the functional run that ought to be excluded to
-        % this file
-        fprintf(Run_BurnIn_fid, sprintf('functional%02d %d\n', Functional_Counter, Run_BurnInTRNumber));
-        
         % Edit the fsf file (only if it hasn't been editted already) and
         % find replace the burn in number
         fsf_file = sprintf('./analysis/firstlevel/functional%02d.fsf', Functional_Counter);
         temp_file = './temp_fsf.fsf';
         
         if exist(fsf_file) > 0
-            command=sprintf('cat %s | sed "s:set fmri(ndelete) %d:set fmri(ndelete) %d:g" > %s', fsf_file, Default_BurnInTRNumber, Run_BurnInTRNumber, temp_file)
+            command=sprintf('cat %s | sed "s:set fmri(ndelete) %d:set fmri(ndelete) %d:g" > %s', fsf_file, Previous_BurnInTRNumber, Run_BurnInTRNumber, temp_file)
             unix(command);
             
             % Move the newly created fsf file
@@ -135,6 +155,12 @@ if BurnIn==1
         end
     end
     
+    % Write the functional run name and burn in to
+    % this file, if the Run_BurnInTRNumber is not the default
+    if Run_BurnInTRNumber~=Default_BurnInTRNumber
+        fprintf(Run_BurnIn_fid, sprintf('functional%02d %d\n', Functional_Counter, Run_BurnInTRNumber));
+    end
+
 else
     BurnInTR_Number=length(BurnInTRs);
 
