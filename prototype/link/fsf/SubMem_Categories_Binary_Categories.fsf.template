@@ -880,7 +880,7 @@ set fmri(con_real7.7) 0
 set fmri(conpic_real.8) 1
 
 # Title for contrast_real 8
-set fmri(conname_real.8) "Familiar Face > Familiar Object"
+set fmri(conname_real.8) "Novel Face > Novel Object"
 
 # Real contrast_real vector 8 element 1
 set fmri(con_real8.1) 1.0
@@ -907,7 +907,7 @@ set fmri(con_real8.7) 0
 set fmri(conpic_real.9) 1
 
 # Title for contrast_real 9
-set fmri(conname_real.9) "Familiar Face > Familiar Place"
+set fmri(conname_real.9) "Novel Face > Novel Place"
 
 # Real contrast_real vector 9 element 1
 set fmri(con_real9.1) 1.0
@@ -934,7 +934,7 @@ set fmri(con_real9.7) 0
 set fmri(conpic_real.10) 1
 
 # Title for contrast_real 10
-set fmri(conname_real.10) "Familiar Object > Familiar Place"
+set fmri(conname_real.10) "Novel Object > Novel Place"
 
 # Real contrast_real vector 10 element 1
 set fmri(con_real10.1) 0
@@ -961,7 +961,7 @@ set fmri(con_real10.7) 0
 set fmri(conpic_real.11) 1
 
 # Title for contrast_real 11
-set fmri(conname_real.11) "Novel Face > Novel Object"
+set fmri(conname_real.11) "Familiar Face > Familiar Object"
 
 # Real contrast_real vector 11 element 1
 set fmri(con_real11.1) 0.0
@@ -988,7 +988,7 @@ set fmri(con_real11.7) 0
 set fmri(conpic_real.12) 1
 
 # Title for contrast_real 12
-set fmri(conname_real.12) "Novel Face > Novel Place"
+set fmri(conname_real.12) "Familiar Face > Familiar Place"
 
 # Real contrast_real vector 12 element 1
 set fmri(con_real12.1) 0
@@ -1015,7 +1015,7 @@ set fmri(con_real12.7) 0
 set fmri(conpic_real.13) 1
 
 # Title for contrast_real 13
-set fmri(conname_real.13) "Novel Object > Novel Place"
+set fmri(conname_real.13) "Familiar Object > Familiar Place"
 
 # Real contrast_real vector 13 element 1
 set fmri(con_real13.1) 0
@@ -1231,7 +1231,7 @@ set fmri(con_orig7.7) 0
 set fmri(conpic_orig.8) 1
 
 # Title for contrast_orig 8
-set fmri(conname_orig.8) "Familiar Face > Familiar Object"
+set fmri(conname_orig.8) "Novel Face > Novel Object"
 
 # Real contrast_orig vector 8 element 1
 set fmri(con_orig8.1) 1.0
@@ -1258,7 +1258,7 @@ set fmri(con_orig8.7) 0
 set fmri(conpic_orig.9) 1
 
 # Title for contrast_orig 9
-set fmri(conname_orig.9) "Familiar Face > Familiar Place"
+set fmri(conname_orig.9) "Novel Face > Novel Place"
 
 # Real contrast_orig vector 9 element 1
 set fmri(con_orig9.1) 1.0
@@ -1285,7 +1285,7 @@ set fmri(con_orig9.7) 0
 set fmri(conpic_orig.10) 1
 
 # Title for contrast_orig 10
-set fmri(conname_orig.10) "Familiar Object > Familiar Place"
+set fmri(conname_orig.10) "Novel Object > Novel Place"
 
 # Real contrast_orig vector 10 element 1
 set fmri(con_orig10.1) 0
@@ -1312,7 +1312,7 @@ set fmri(con_orig10.7) 0
 set fmri(conpic_orig.11) 1
 
 # Title for contrast_orig 11
-set fmri(conname_orig.11) "Novel Face > Novel Object"
+set fmri(conname_orig.11) "Familiar Face > Familiar Object"
 
 # Real contrast_orig vector 11 element 1
 set fmri(con_orig11.1) 0.0
@@ -1339,7 +1339,7 @@ set fmri(con_orig11.7) 0
 set fmri(conpic_orig.12) 1
 
 # Title for contrast_orig 12
-set fmri(conname_orig.12) "Novel Face > Novel Place"
+set fmri(conname_orig.12) "Familiar Face > Familiar Place"
 
 # Real contrast_orig vector 12 element 1
 set fmri(con_orig12.1) 0
@@ -1366,7 +1366,7 @@ set fmri(con_orig12.7) 0
 set fmri(conpic_orig.13) 1
 
 # Title for contrast_orig 13
-set fmri(conname_orig.13) "Novel Object > Novel Place"
+set fmri(conname_orig.13) "Familiar Object > Familiar Place"
 
 # Real contrast_orig vector 13 element 1
 set fmri(con_orig13.1) 0
