@@ -35,6 +35,7 @@ do
         echo 'already ran ASHS - copying over the segmentations to data folder'
         
         # first separate all of the hpc and mtl ROIs from the outputs 
+        # note that ASHS creates a lot of different files but for the purposes of this code, we only care about the lfseg_corr_nogray files -- these are the files that have the estimated hippocampal and MTL ROIs for this subject (separated into right and left hemisphere)
         fslmaths ${PROJ_DIR}/${sub}_right_lfseg_corr_nogray.nii.gz -thr 6 -uthr 6 -bin ${hpc_dir}/${sub}_right_hpc.nii.gz
         fslmaths ${PROJ_DIR}/${sub}_right_lfseg_corr_nogray.nii.gz -thr 4 -uthr 4 -bin ${hpc_dir}/${sub}_right_mtl.nii.gz
         fslmaths ${PROJ_DIR}/${sub}_left_lfseg_corr_nogray.nii.gz -thr 5 -uthr 5 -bin ${hpc_dir}/${sub}_left_hpc.nii.gz
@@ -48,7 +49,7 @@ do
     else
         echo 'running ashs on the highres_original file (in standard space)'
 
-        # run ASHS on this participant, supplying the highres2standard image as both the T1 and T2
+        # run ASHS on this participant, supplying the highres2standard image (AKA the T1 image registered to standard space) as both the T1 and T2
         sbatch ${ASHS_ROOT}/run_ashs.sh -I ${sub} -a ${ASHS_MODEL} -g ${ants_reg_dir}/highres2standard.nii.gz -f ${ants_reg_dir}/highres2standard.nii.gz -w ${PROJ_DIR}/subjects/${sub}/analysis/secondlevel/${sub}_hippocampus_standard -T
 
     fi
