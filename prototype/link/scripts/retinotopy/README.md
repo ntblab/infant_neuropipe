@@ -10,7 +10,11 @@ Use **sbatch ./scripts/retinotopy/supervisor_retinotopy.sh** to run the necessar
 This directory can be created with FreeSurfer or by adapting iBEAT. To use Freesurfer you can use `scripts/run_recon.sh` as a script for launching the job. If using iBEAT then follow the steps described in the `convert_iBEAT-FS.md` README. This freesurfer directory must be able to have SUMA created from it.
 
 
-3. Make the cuts in the inflated surface using tksurfer
+3. Make FSL and Freesurfer interoperable
+Use **sbatch ./scripts/retinotopy/FSLtoFS.sh $FREESURFER_NAME** to take the registration.feat folder in the secondlevel and align it with the Freesurfer directory defined by $FREESURFER_NAME
+
+
+4. Make the cuts in the inflated surface using tksurfer
 With the freesurfer directory set up you can run tksurfer to make cuts of the inflated surface. Where you should make the cuts is outlined here: https://surfer.nmr.mgh.harvard.edu/fswiki/FreeSurferOccipitalFlattenedPatch
 
 It might be possible to run this on the cluster but you probably need to pull it locally to keep your sanity. Regardless I am assuming that you are in a participant directory and that there is a folder called `./analysis/freesurfer/iBEAT/`. Once in the participant directory run the commands below, once for each hemisphere. This command creates a gifti file that can be used to help guide the cut, and then loads it in to tksurfer. This command assumes you have a file called `meridian_zstat3_aligned.nii.gz` in the directory which is created by the GLM. Alternatively, this file can be found in the data release in the `contrast_maps` section.
@@ -24,7 +28,7 @@ tksurfer iBEAT $hemi inflated -o analysis/freesurfer/iBEAT/surf/${hemi}.conv.gii
 ```
 
 
-4. Flatten the cut surfaces
+5. Flatten the cut surfaces
 If working on files locally, move them back on to the cluster to the `analysis/freesurfer/iBEAT/surf/` folder. Then use those newly created files to cut and flatten the surface using these scripts (takes about an hour):
 
 ```
@@ -33,15 +37,26 @@ sbatch scripts/retinotopy/run_mris_flatten.sh rh iBEAT
 ```
 
 
-5. Make the SUMA files
+6. Make the SUMA files
 You need to make SUMA spec files so that they can be opened in AFNI.
 
+```
 cd analysis/freesurfer/iBEAT/
 @SUMA_Make_Spec_FS -sid iBEAT
+```
 
-Also move any files that you want into that SUMA folder, make sure the volumes are aligned to the SAME highres as the surfaces are
+7. Align the test statistics with Freesurfer and SUMA
+Use the test statistic maps created in step 1 to align to Freesurfer. Here is a sample line. This is needed lest you have functional data moved into the wrong anatomical space:
+`flirt -in analysis/secondlevel_Retinotopy/default/Retinotopy_sf_Z.feat/stats/zstat1.nii.gz -ref analysis/freesurfer/mprage01/SUMA/T1.nii -applyxfm -init analysis/secondlevel/registration.feat/reg/freesurfer/exf2anat.init.fsl.mat -out ./zstat1_FS_aligned.nii.gz -interp nearestneighbour`
 
-6. Load data into SUMA
+Once they have been aligned to the freesurfer, you can flatten them into a 1D file using the following lines:
+`3dVol2Surf -spec $SPEC_FILE -sv $FUNC -out_1D $OUT_FILE -surf_A smoothwm -grid_parent $FUNC -map_func mask`
+`1dcat -sel ''[6]'' $OUT_FILE > temp_$HEMI.txt`
+`mv temp_$HEMI.txt $OUT_FILE`
+Where `SPEC_FILE` refers to the .spec file made by SUMA for your hemisphere (`HEMI`). `FUNC` refers to the input functional volume (e.g., the test statistic) and `OUT_FILE` refers to the surface version of the FUNC file
+
+
+8. Load data into SUMA
 
 Plot the data on the flat map using SUMA. Again, this might be possible on the cluster but you probably want to do this locally. There are two main options, the first uses AFNI and SUMA, the second uses just SUMA. Like the results published using this data, you likely want to use the 95\% range for the color axis to give a good dynamic range from which to start.  
 
@@ -103,7 +118,13 @@ To know where vV4 is, look for the collateral sulcus on the uninflated surface a
 Often there is a blob anterior to ventral V4 that is sensitive to horizontal that should be ignored and drawn around
 
 
-8. Take efficient screenshots of the regions
+9. Convert the .roi files into useful surfaces
+The output of the tracing is .roi files that cannot be used with our other file types. To convert them to 1D formats (which are useful) do the following:
+`ROI2dataset -prefix $output -keep_separate -of 1D -padded_to_node $node_number -input $input` 
+Where `$node_number` is the length of a padded 1D dset (e.g., the output of IC_surfs). Can find it by using `cat` and `| wc -l` 
+
+
+10. Take efficient screenshots of the regions
 
 Make 1D files that can be used to take pictures of individual hemispheres of the data. In particular, this makes a 1D file with functional data (e.g., SF or meridian) and the traced regions in a single data file that can be loaded on the brain
 
