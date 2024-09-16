@@ -35,8 +35,8 @@ fi
 
 yes | cp $REGCONCAT_DIR/default/func2highres.nii.gz ${featDir}/stats/func2highres.nii.gz
 
-echo 'Replacing bad transformation matrices with good ones'
-yes | cp -f scripts/retinotopy/identitymatrix.mat $featDir/reg/example_func2initial_highres.mat
+echo 'Replacing bad transformation matrices with good ones since we have already aligned functionals to anatomy'
+yes | cp -f analysis/secondlevel/identity.mat $featDir/reg/example_func2initial_highres.mat
 updatefeatreg $featDir/
 
 #Allows FSL and Freesurfer to speak the same language
