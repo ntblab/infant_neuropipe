@@ -19,12 +19,12 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 from matplotlib.colors import ListedColormap
 
-proj_dir = '/gpfs/milgram/project/turk-browne/projects/dev_neuropipe/'
-Wang_atlas_dir = '/gpfs/milgram/project/turk-browne/shared_resources/atlases/ProbAtlas_v4/'
+proj_dir = 'PROJ_DIR/'
+Wang_atlas_dir = 'ATLAS_DIR/'
 
 predict_dir = proj_dir + 'data/predict_retinotopy/'
 plot_dir = predict_dir + 'plots/'
-movies_dir = '%s/data/Movies/' % proj_dir
+movies_dir = '%s/SRM_Movies/' % predict_dir
 retinotopy_dir = '%s/data/Retinotopy/' % proj_dir
 
 phases = 1 # What is the minimum number of phases per participant?
