@@ -2,13 +2,13 @@
 
 This directory contains the scripts necessary to produce the figures and results from the paper "Movies reveal the fine-grained organization of infant visual cortex" by Ellis, Yates, Arcaro, & Turk-Browne.  
 
-The primary script to refer to is `predict_retinotopy.ipynb`, a jupyter notebook that aggregates the data and outputs of other functions to produce the statistics and figures from the paper. To be able to run this script, you will need to have all of the data downloaded into the `data/` directory. Specifically, you need the [https://doi.org/10.5061/dryad.7h44j0ztm](retinotopy data) and the preprocessed movie data (Dryad link to come). 
+The primary script to refer to is `predict_retinotopy.ipynb`, a jupyter notebook that aggregates the data and outputs of other functions to produce the statistics and figures from the paper. To be able to run this script, you will need to have all of the data downloaded into the `data/` directory. Specifically, you need the [retinotopy data](https://doi.org/10.5061/dryad.7h44j0ztm). 
 
 The only change to the scripts that you must make in order to run the code is the path specified in `utils.py`.
 
 The notebook should run without further edits; however, some cells in the notebook will take a long time to run as they are generating files. Ruunning the notebook will allow you to replicate the results from the paper, although some statistics might differ slightly based on random seeds.  
 
-You will not be able to run the scripts `SRM_predict_retinotopy` and `time_segment_matching_features` because they call on data from the `data/Movie/` directory. This data is too large to upload, so instead the outputs of the scripts are uploaded with the data release.
+You will not be able to run the scripts `SRM_predict_retinotopy` and `time_segment_matching_features` because they call on data from the `data/Movie/` directory. This data is too large to upload, so instead the outputs of the scripts are uploaded with the data release. The same logic applies to the adult data which is also uploaded in only its preprocessed form.
 
 The command to run the ICA was: `melodic -i analysis/secondlevel_${MOVIE}/default/NIFTI/func2highres_${MOVIE}_Z.nii.gz -o analysis/secondlevel_${MOVIE}/default/func2highres_${MOVIE}_Z.ica -v --nobet --bgthreshold=1 --tr=2 -d 0 --mmthresh=0.5 --report --guireport=analysis/secondlevel_${MOVIE}/default/func2highres_${MOVIE}_Z.ica/report.html`. This was run in each participant's directory with `${MOVIE}` set to either `MM` or `ChildPlay`. The `melodic_IC.nii.gz` output was taken from this directory and used for these analyses.
 
