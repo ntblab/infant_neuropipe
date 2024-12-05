@@ -22,6 +22,7 @@
 % 01/06/2020
 % 03/02/2020
 % 10/07/2021 now make timing files for retrieval / test events 
+% 11/12/2024 make no pref vs pref trials
 
 function [Name_Condition, Weights]=Timing_Condition_SubMem_Categories(varargin)
 
@@ -36,7 +37,7 @@ BlockName=varargin{5};
 %further make timing files based on looking behavior (determine remembered
 %vs forgotten)
 
-NumConditions=12; % defined in the eyetracking experiment script
+NumConditions=14; % defined in the eyetracking experiment script (HARD CODED)
 
 %Iterate different specifities of looking time
 Weights = {};
@@ -128,8 +129,22 @@ for ConditionCounter = 1:NumConditions
             ConditionIdx=EyeData.Weights.SubMem_Categories.Condition.(BlockName)(ConditionCounter, EventCounter);
             PossibleNames={'SubMem_Categories-Condition_Binary_DelayLength', 'SubMem_Categories-Condition_Binary_DelayLength'};
             Weights{ConditionCounter} = 1;              
-        end
         
+         
+     elseif ConditionCounter==13
+            
+            %What condition is it
+            ConditionIdx=EyeData.Weights.SubMem_Categories.Condition.(BlockName)(ConditionCounter, EventCounter);
+            PossibleNames={'SubMem_Categories-Condition_LowPreference', 'SubMem_Categories-Condition_HighPreference'};
+            Weights{ConditionCounter} = 1;
+            
+        elseif ConditionCounter==14
+            
+            ConditionIdx=1;
+            PossibleNames={'SubMem_Categories-Condition_OverallPref_Z'};
+            Weights{ConditionCounter} = EyeData.Weights.SubMem_Categories.Condition.(BlockName)(ConditionCounter, EventCounter);
+           
+        end
         %Store the first and second level names
         if ConditionIdx~=0
             Name_Condition(ConditionCounter).Second{1}=PossibleNames{ConditionIdx};
