@@ -15,6 +15,7 @@
 % Start from last trial correctly this time; include encode trials where they look entirely at one or the other image 12/01/2020
 % Save more info about relating eye data to test and encode trials; set up
 % for retreival timing files 10/07/2021
+% Save out a version of pref vs. no pref trials 11/12/2024
 
 function EyeData=EyeTracking_Experiment_SubMem_Categories(varargin)
 %% Set up
@@ -324,6 +325,7 @@ for BlockCounter=1:length(BlockList)
     Weights.SubMem_Categories.Parametric.(BlockList{BlockCounter})=zeros(1, length(Data.Experiment_SubMem_Categories.(BlockList{BlockCounter}).Timing.ImageOns));
 end
 
+
 Idxs_Used=[];
 EyeData.SubMem_Test.exclude_trial = [];
 for TrialCounter=1:length(EyeTest2Encode)
@@ -372,10 +374,11 @@ for TrialCounter=1:length(EyeTest2Encode)
         %Check if they looked at the encoding image long enough or if we don't
         %have data for the encoding trial for some reason
         %Just include the response '3' which means on center (index 4 here, since 0 is off screen)
-        if sum(duration_responses(4)) < (minimum_Encode_fixation) 
+        if sum(duration_responses(4)) < (minimum_Encode_fixation) || sum(duration_responses(2:6)) < (minimum_Encode_fixation)*2
             exclude_trial = 1;
         end
         
+       
         % Specifically, only take the first presentation of the test trial, unless that presentation
         % was all coded as Off-Screen then take the second
         % Cycle through all other Test trials and compare to the current one
@@ -458,8 +461,8 @@ else
     Weights.SubMem_Test.Parametric = ones(1, length(Weights.SubMem_Test.Raw)) * nan;
     Weights.SubMem_Test.Parametric(Idxs_Used) = nanzscore(Weights.SubMem_Test.Raw(Idxs_Used));
     
-    % Preset for the conditions
-    Weights.SubMem_Test.Condition=zeros(12, length(Weights.SubMem_Test.Raw)) * nan;
+    % Preset for the conditions (hard code the number of conditions ...)
+    Weights.SubMem_Test.Condition=zeros(14, length(Weights.SubMem_Test.Raw)) * nan;
     
     %Condition 1!
     %Binarize the data, were they looking to the new stim more than the old stim?
@@ -554,6 +557,38 @@ else
     
     Weights.SubMem_Test.Condition(12, Idxs_Used)=Binaries(Idxs_Used);
     
+    % Condition 13  
+    % Now we are going to look at trials in which infants showed a strong
+    % preference in either directions vs. did not show much of a preference
+    % Cutoff of 0.3-0.7 roughly equated the number of trials in each
+    % condition across participants
+    W = zeros(1, length(Weights.SubMem_Test.Raw)) * nan; % reset this again
+    W(Idxs_Used) = Weights.SubMem_Test.Raw(Idxs_Used); 
+    
+    for Trial=1:length(W)
+        if W(Trial) <  0.3 % if strong novel
+            W(Trial) = 2;
+        elseif W(Trial) > 0.7 % if strong familiar
+            W(Trial) = 2;
+        elseif W(Trial) > 0.3 && W(Trial) < 0.7 % if weak preference
+            W(Trial) = 1; 
+        end
+    end
+    
+    Weights.SubMem_Test.Condition(13,:) = W;
+
+    % Condition 14
+    % Now we are going to look at the absolute looking preference in either
+    % direction
+    % first get the absolute value of the looking preferences after
+    % recentering around 0% looking pref (where positive is fam pref)
+    absolute_preference = abs(Weights.SubMem_Test.Raw -0.5);
+    
+    % z-score it for use in the timing files
+    abs_pref_z = nanzscore(absolute_preference);
+
+    % set
+    Weights.SubMem_Test.Condition(14,:)=abs_pref_z;
     
     %% Pair Test with Encode trials
     %The moment we have been waiting for!
