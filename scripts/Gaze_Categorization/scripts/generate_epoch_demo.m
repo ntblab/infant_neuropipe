@@ -2,7 +2,7 @@
 %
 % Load in an image list from a participant and specify a certain epoch of
 % data. Then pull the images associated with that epoch out and convert
-% them in to a gif or mp4. 
+% them in to a gif or mp4. mj2 is a reasonable default
 %
 % Provide the experiment name (don't include 'Experiment_') and the index,
 % which is a three element vector referring to the block, repetition and
@@ -16,7 +16,7 @@ input_dir = sprintf('../Frames/%s/', participant_name);
 image_list_name = sprintf('../Frames/%s/ImageList.mat', participant_name);
 output_name = sprintf('../saved_demos/%s_%s_%d_%d_%d.%s', participant_name, experiment_name, block_number, repetition_number, epoch_number, extension);
 
-frame_time = 0.0167; % How long should you wait between frames 
+frame_time = 0.055; % How long should you wait between frames 
 
 fprintf('Loading %s\n', image_list_name);
 fprintf('Saving %s\n', output_name);
@@ -32,6 +32,8 @@ if ~strcmp(extension, 'gif')
         format = 'MPEG-4';
     elseif strcmp(extension, 'mj2')
         format = 'Motion JPEG 2000';
+    elseif strcmp(extension, 'avi')
+        format = 'Uncompressed AVI';
     else
         fprintf('Extension not found, quitting\n');
         return;

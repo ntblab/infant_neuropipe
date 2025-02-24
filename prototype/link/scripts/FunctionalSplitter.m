@@ -123,6 +123,13 @@ for TimingFileCounter=1:length(TimingFiles)
     else
         Type='Block'; %If it is neither then assume this is block timing
     end
+
+    try
+        temp=textread([InputDir, 'Timing/', iTimingFile]);
+    catch
+        fprintf('\n ERROR with timing file. Not including %s. Please check this is okay.\n',iTimingFile)
+        continue
+    end
     
     %Store the relevant information
     Concat.(functional_run).(Type).Files{end+1}=iTimingFile;
@@ -363,6 +370,12 @@ for functional_run = functional_runs
     %What is the TR for the Functional you have selected?
     [~, text]=unix(sprintf('fslval %s pixdim4', Functional_Name));
     TR=str2double(text);
+
+    % if the TR is in milliseconds (greater than 1000) make sure to change
+    % it to seconds
+    if TR > 1000
+        TR =TR/1000;
+    end
     
     % How many TRs are there for this run
     [~, text]=unix(sprintf('fslval %s dim4', Functional_Name));
@@ -724,7 +737,12 @@ for functional_run = functional_runs
                         Weight=Mat_Condition(BlockEvents(EventCounter),3);
                         
                         %Write the data
-                        FileID=[Experiment, '_Condition_', num2str(ConditionCounter)];
+                        %FileID=[Experiment, '_Condition_', num2str(ConditionCounter)];
+                        
+                        %Use the condition name rather than the counter in case the files get out
+                        %of order in separate runs 
+                        Condition_Name=temp_Filename_Condition(max(strfind(temp_Filename_Condition,'Condition')+10):end-4);
+                        FileID=[Experiment, '_Condition_', Condition_Name];
                         
                         %Has the file been created
                         if isempty(strcmp(fieldnames(FileIDs),FileID)) || all(strcmp(fieldnames(FileIDs), FileID)==0)

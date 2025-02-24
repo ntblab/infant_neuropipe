@@ -5,7 +5,7 @@
 # standard brain This takes as an input the specification of the atlas
 # type to use. At the moment, 'nihpd' and 'UNC' atlases are supported
 #
-#
+# This script assumes you have masked the data to create _brain versions of the nihpd data. For instance, `fslmaths nihpd_asym_05-08_t1w.nii.gz -mas nihpd_asym_05-08_mask.nii.gz nihpd_asym_05-08_t1w_brain.nii.gz`
 # Created by C Ellis 0318.
 # Extended for other atlases
 
@@ -56,10 +56,10 @@ then
 	# Find all the potential standard brains
 	if [ $Age -lt 60 ]
 	then
-		standards=`ls $ATLAS_DIR/nihpd_obj2_asym_nifti/nihpd_asym_??-??_t1w.nii`
+		standards=`ls $ATLAS_DIR/nihpd_obj2_asym_nifti/nihpd_asym_??-??_t1w_brain.nii.gz`
 	elif [ $Age -ge 60 ]
 	then	
-		standards=`ls $ATLAS_DIR/nihpd_asym_all_nifti/nihpd_asym_*-*_t1w.nii`
+		standards=`ls $ATLAS_DIR/nihpd_asym_all_nifti/nihpd_asym_*-*_t1w_brain.nii.gz`
 	fi
 	
 	# Cycle through the standards and determine if the age is within the bounds

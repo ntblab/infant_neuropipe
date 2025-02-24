@@ -24,16 +24,21 @@ unix(Command);
 Command=(sprintf('fslmaths %s temp_%s.nii.gz -odt float', Functional, functional_run))
 unix(Command);
 
-% Take the volume without the burn in TR. Over estimate the TRs because
-% it doesn't matter
-Command=sprintf('fslroi temp_%s.nii.gz temp_%s.nii.gz %d 10000', functional_run, functional_run, Burn_In_TRs)
-unix(Command);
 % dim4: time dimension of functional run. Use to find total TRs
 Command=sprintf('fslval temp_%s.nii.gz dim4', functional_run)
 [~, TR_total]=unix(Command);
 
+% Get the TRs minus the burnin
+TR_total=str2double(TR_total);
+TR_total=TR_total-Burn_In_TRs;
+
+% Take the volume without the burn in TR. Need the exact number of TRs for later versions of FSL
+Command=sprintf('fslroi temp_%s.nii.gz temp_%s.nii.gz %d %d', functional_run, functional_run, Burn_In_TRs,TR_total)
+unix(Command);
+
+
 %What is the middle TR
-MiddleTR=floor(str2double(TR_total)/2);
+MiddleTR=floor(TR_total/2);
 
 %Make an example func of the first TR
 %fslroi extracts region of interest from an image, allows you to
