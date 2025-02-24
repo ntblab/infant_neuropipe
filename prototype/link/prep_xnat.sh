@@ -161,14 +161,14 @@ done
 echo "==Prep (4) : split long runs into two parts =="
 echo ' '
 # split long runs into two parts, so that the bxh tools don’t crash..
-thresh=250  # How many TRs before a split is made?
+thresh=550  # How many TRs before a split is made?
 for file in $NIFTI_DIR/*functional*.nii.gz; do
-    
+
     num_volumes=$(fslnvols $file)
-    
+
     echo "number of volumes is $num_volumes"
     if [[ "$num_volumes" -gt $thresh ]]; then
-    
+
 		# generate part 1
 		prefix=${file%.nii.gz}
 		postfix="_part1"
@@ -177,12 +177,13 @@ for file in $NIFTI_DIR/*functional*.nii.gz; do
 		echo "bxhselect --overwrite $prefix$postfix$ext $prefix$postfix"
 		fslroi $file $prefix$postfix 0 $thresh
 		bxhselect --overwrite $prefix$postfix$ext $prefix$postfix
-	
+
 		# generate part 2
 		postfix="_part2"
-		echo "fslroi $file $prefix$postfix$ext $thresh 400"
+		remain_tr=$(($num_volumes-$thresh))
+		echo "fslroi $file $prefix$postfix$ext $thresh $remain_tr"
 		echo "bxhselect --overwrite $prefix$postfix$ext $prefix$postfix"
-		fslroi $file $prefix$postfix $thresh 400
+		fslroi $file $prefix$postfix $thresh $remain_tr
 		bxhselect --overwrite $prefix$postfix$ext $prefix$postfix
 		# move/delete original 4D nifti
 		#bakext=".bak"

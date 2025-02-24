@@ -68,7 +68,7 @@ def generate_descriptives(func_run):
         if file_num > 0: 
             plt.figure()
             for file_counter, Excluded_TR_file in enumerate(Excluded_TR_files):
-                plt.subplot(np.ceil(np.sqrt(file_num)), np.ceil(np.sqrt(file_num)), file_counter + 1)
+                plt.subplot(int(np.ceil(np.sqrt(file_num))), int(np.ceil(np.sqrt(file_num))),file_counter+1)
 
                 # Load in the image
                 img = mpimg.imread(Excluded_TR_file)
@@ -430,27 +430,41 @@ def summarise_behavior():
 # Summarise the secondlevel data        
 def summarise_secondlevel():
         
-    reg_folder = 'analysis/secondlevel/registration.feat/'
     
-    highres_file = reg_folder + 'reg/highres2standard.nii.gz'
-    standard_file = reg_folder + 'reg/standard.nii.gz'
-    
-    manual_reg_folder=reg_folder+'reg/Manual_Reg_Standard/'
-    
-    if os.path.isdir(manual_reg_folder):
-        print('Manual registration to standard has been performed')
+
+    reg_folder = 'analysis/secondlevel/registration_ANTs/'    
+    if os.path.isdir(reg_folder):
+
+        print('Using ANTs directory')
+        highres_file = reg_folder + 'highres2standard.nii.gz'
+        standard_file = None # Get this from the automatic directory
+
     else:
-        print('!#!#!#!#!#!#!#!\n!#!#!#!#!#!#!#!\n\nCheck that you manually aligned HighRes to Standard\n\n!#!#!#!#!#!#!#!\n!#!#!#!#!#!#!#!\n')
+        print('!#!#!#!#!#!#!#!\n!#!#!#!#!#!#!#!\n\nANTs directory not found, looking for manual registration\n\n!#!#!#!#!#!#!#!\n!#!#!#!#!#!#!#!')
+
+        reg_folder = 'analysis/secondlevel/registration.feat/'
+        highres_file = reg_folder + 'reg/highres2standard.nii.gz'
+        standard_file = reg_folder + 'reg/standard.nii.gz'
+
+        manual_reg_folder=reg_folder+'reg/Manual_Reg_Standard/'
+	    
+        if os.path.isdir(manual_reg_folder):
+            print('Manual registration to standard has been performed')
+        else:
+            print('!#!#!#!#!#!#!#!\n!#!#!#!#!#!#!#!\n\nCheck that you manually aligned HighRes to Standard\n\n!#!#!#!#!#!#!#!\n!#!#!#!#!#!#!#!\n')
     
     # Load the files
     if os.path.isfile(highres_file):
         
         # Load the images
         highres = nibabel.load(highres_file)
-        standard = nibabel.load(standard_file)
+        if standard_file is not None:
+            standard = nibabel.load(standard_file)
         
-        # Show the interactive viewer for standard and highres
-        fig=plotting.view_img(highres,bg_img=standard,opacity=0.4)
+            # Show the interactive viewer for standard and highres
+            fig=plotting.view_img(highres, bg_img=standard, opacity=0.4)
+        else:
+            fig=plotting.view_img(highres, opacity=0.4)
         
     else:
         # Set to nothing

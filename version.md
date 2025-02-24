@@ -17,3 +17,6 @@ Added support for nonlinear alignment via ANTS and updated the tutorial
 
 ## V_1.5
 Fixed an error in pseudorun divide that did not check for irregular burn ins. Made flexible edits to preprocessing pipeline for motion parameter exploration
+
+## V_1.6
+Commit changes to scripts that were inadvertently left out of earlier releases. Minor additional updates to work with more recent versions of some software. 

@@ -556,7 +556,7 @@ if ~isempty(find(StepsRun==9))
                     confound_counter=confound_counter+1;
                 end
                 
-                suptitle(sprintf('Preceding (left), excluded (middle) and following (right) TRs\nrun %d part %d', functionalCounter,  plots))
+                sgtitle(sprintf('Preceding (left), excluded (middle) and following (right) TRs\nrun %d part %d', functionalCounter,  plots))
                 
                 savename=sprintf('%s/Excluded_TRs_functional%s%s_part_%d.png', confound_dir, functional_run, suffix, plots)
                 saveas(gcf, savename);

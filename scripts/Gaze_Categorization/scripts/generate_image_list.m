@@ -132,6 +132,7 @@ if length(dir([ParticipantDir, '/*.avi'])) > 0 && isdir([ParticipantDir, '/eyeIm
     % Issue warning if need be
     if missed_frame > 0 || total_frames ~= frame_num
         warning('You are missing %d frames from your video that are listed in your timing file. This requires URGENT attention.', missed_frame);
+        return
     end
     
     % Close so it can be opened again in a sec
@@ -229,7 +230,7 @@ while is_outliers
     % dragging it down)
     variance_threshold = (nanstd(pred_diff) * 3);
     if any(abs(pred_diff) > variance_threshold)
-       removed_timepoint = removed_timepoint + 1;
+       removed_timepoint = removed_timepoint + sum(abs(pred_diff) >= variance_threshold);
        MatlabTime = MatlabTime(abs(pred_diff) < variance_threshold);
        EyeTrackerTime = EyeTrackerTime(abs(pred_diff) < variance_threshold);
     else
@@ -330,6 +331,7 @@ while ischar(Line)
                     
                     %Store what Trial type this when you start
                     TrialType.(ExperimentName){BlockNumber, RepetitionNumber, TrialCounter}=Line;
+                    TrialType_temp=Line; % Store a backup of the trial start message for later
                     
                     %Advance to the next line since you shouldn't start on
                     %the message
@@ -354,7 +356,7 @@ while ischar(Line)
                         
                         %Add image instructions that are experiment
                         %and image specific where relevant
-                        [Instructions, Instruction_Idx, Instruction_continuing] = image_specific_instructions(ExperimentName, Line, TabIdx, Instructions, Instruction_Idx, Instruction_continuing, Data, BlockName);
+                        [Instructions, Instruction_Idx, Instruction_continuing] = image_specific_instructions(ExperimentName, Line, TabIdx, Instructions, Instruction_Idx, Instruction_continuing, Data, BlockName,TrialType_temp);
                         
                         Line = fgetl(TimingFileID); %Pull out a new line from this file
                     end

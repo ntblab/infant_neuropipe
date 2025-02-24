@@ -58,9 +58,11 @@ end
 
 Interpolation=1; %How many frames will you sample per participant. 5 and a rate of zero gives you approximately realtime
 Rate=10; %How many frames will you force to wait for in between frames (0 means (FrameRate*Interpolation)+ProcessingTime/60 speed)
+Speedup_rate = 0.75; % How much should the rate reduce on each held key press
+Fast_frame_skip=Rate * (Speedup_rate .^ [20, 40]); % If not empty, this will skip a frame whenever the current rate is below the given number. The numbers in parentheses indicate the number of key presses held before it starts doing that many skips
 ScalingFactor=2; %How large is the image scaled to be
 TrialsperCalibrationDisplay=20; %How frequently will coders be given the opportunity to see the eye tracking calibration?
-VignetteSize=0.1; %What proportion of the image is shown (in the Y axis). 1 means all. 0.5 is appropriate for Princeton and MRRC, 0.1 is appropriate for BIC
+VignetteSize=0.3; %What proportion of the image is shown (in the Y axis). 1 means all. 0.5 is appropriate for Princeton and MRRC, 0.1 is appropriate for BIC
 im_smoothing = 0; %Define Filtering here if you want to use it (use a odd integer). If you don't want filtering then set to zero.
 draw_window=0; % Do you want to draw a frame around the eye on some frames
 
@@ -159,6 +161,8 @@ Gaze_Categorization_Responses
 AdjustUpKey='UpArrow';
 AdjustDownKey='DownArrow';
 RateKey='p'; % Toggle the presentation rate (accelerates over about 1s to top speed that images can possibly be shown)
+IgnoreKey='n'; % if the trial is not going to be usable anyways or you want to code the whole trial as offscreen
+
 
 %% Look through the files and find out how many people have coded it. If
 %one or more people have coded this participant then point this out
@@ -677,6 +681,34 @@ while TrialCounter <= length(Indexes)
             %Increment
             FrameCounter=FrameCounter+1;
             %Trial
+             
+        % decide to ignore the rest of the trial     
+        elseif strcmp(Response, IgnoreKey)
+            
+            % cycle through the remaining frames
+            for tempFrameCounter=FrameCounter:length(FrameList)
+                iFrame =FrameList(tempFrameCounter);
+                %Store the output. The indexes are a cell containing: ExperimentName, BlockNumber, RepetitionNumber, TrialCounter
+                Output.Experiment.(Indexes{TrialCounter}{1}){Indexes{TrialCounter}{2}, Indexes{TrialCounter}{3}, Indexes{TrialCounter}{4}}{iFrame}='space';
+                
+                %Store the response as the time since the experiment started
+                TimesinceStart=(str2double(iTiming{iFrame})-StartTime_EyeTracker)/Output.EyeTrackerTime_slope;
+                Output.Timing.(Indexes{TrialCounter}{1}){Indexes{TrialCounter}{2}, Indexes{TrialCounter}{3}, Indexes{TrialCounter}{4}}{iFrame}= {TimesinceStart, 'space'};
+                
+                %What are the indexes for the trial to start
+                Output.Indexes.(Indexes{TrialCounter}{1}){Indexes{TrialCounter}{2}, Indexes{TrialCounter}{3}, Indexes{TrialCounter}{4}}{iFrame}={Indexes{TrialCounter}, iFrame};
+                
+                %Store the vignette window
+                Output.Vignette.(Indexes{TrialCounter}{1}){Indexes{TrialCounter}{2}, Indexes{TrialCounter}{3}, Indexes{TrialCounter}{4}}(iFrame,:)=ImageVignette;
+                
+                %Store that this was skipped 
+                Output.SkippedFrames.(Indexes{TrialCounter}{1}){Indexes{TrialCounter}{2}, Indexes{TrialCounter}{3}, Indexes{TrialCounter}{4}}(iFrame,:)=1;
+                
+            end
+            
+            % now say that you made it to the end
+            FrameCounter=tempFrameCounter;
+        
         elseif strcmp(Response, BackKey) && FrameCounter>1
             
             %Are you going backwards
@@ -756,17 +788,56 @@ while TrialCounter <= length(Indexes)
             % So that it doesn't flip
             pause(0.2);
             
-            
+         else
+            % If they aren't pressing one of the relevant keys the stop
+            % accelerating
+            accelerate_on = 0;   
         end
         
         % If the responses are set to accelerate then update the rate here
         if accelerate_enabled == 1 && accelerate_on == 1
             
             % Reduce the rate
-            Current_Rate = Current_Rate * 0.75;
+            Current_Rate = Current_Rate * Speedup_rate;
             
             %DrawFormattedText(window.onScreen, 'Accelerating', 'right', [], uint8([255,255,255]));
-        else
+                    
+            % If enabled then this will skip this number of frames when
+            % going fast
+            for frame_skip = 1:sum(Fast_frame_skip > Current_Rate)
+                if FrameCounter<=length(FrameList)
+                    
+                    % Change counter
+                    if strcmp(Response, BackKey) && FrameCounter>1
+                        
+                        %Are you going backwards
+                        FrameCounter=FrameCounter-1;
+                    elseif any(strcmp(ResponseAllowed{ResponseCategory}, Response))
+                        % Get the frame counter
+                        iFrame=FrameList(FrameCounter);
+                        
+                        %Store the output. The indexes are a cell containing: ExperimentName, BlockNumber, RepetitionNumber, TrialCounter
+                        Output.Experiment.(Indexes{TrialCounter}{1}){Indexes{TrialCounter}{2}, Indexes{TrialCounter}{3}, Indexes{TrialCounter}{4}}{iFrame}=Response;
+                        
+                        %Store the response as the time since the experiment started
+                        TimesinceStart=(str2double(iTiming{iFrame})-StartTime_EyeTracker)/Output.EyeTrackerTime_slope;
+                        Output.Timing.(Indexes{TrialCounter}{1}){Indexes{TrialCounter}{2}, Indexes{TrialCounter}{3}, Indexes{TrialCounter}{4}}{iFrame}= {TimesinceStart, Response};
+                        
+                        %What are the indexes for the trial to start
+                        Output.Indexes.(Indexes{TrialCounter}{1}){Indexes{TrialCounter}{2}, Indexes{TrialCounter}{3}, Indexes{TrialCounter}{4}}{iFrame}={Indexes{TrialCounter}, iFrame};
+                        
+                        %Store the vignette window
+                        Output.Vignette.(Indexes{TrialCounter}{1}){Indexes{TrialCounter}{2}, Indexes{TrialCounter}{3}, Indexes{TrialCounter}{4}}(iFrame,:)=ImageVignette;
+                        
+                        %Increment
+                        FrameCounter=FrameCounter+1;
+                    end
+                    
+                end
+                
+            end
+            
+            else
             % Reset the rate to baseline
             Current_Rate = Rate;
             

@@ -31,8 +31,8 @@ function EyeData=EyeTracking_Exclude(EyeData)
 
 Experiments=fieldnames(EyeData.Timing);
 
-Default_InvalidResponses=0; % Default to test only invalid
-Default_InvalidCodes={0}; % Default to eyes closed
+Default_InvalidResponses=0; % How many frames have already been excluded (default to zero)
+Default_InvalidCodes={0}; % Default to eyes closed. If 6 is added then this means that undetected is also excluded
 Default_Criterion=0.5; % Default inclusion rate (high means stricter)
 
 %Iterate through the experiment counter
@@ -101,9 +101,8 @@ for ExperimentCounter=1:length(Experiments)
         Idx_Name=EyeData.Idx_Names.(Experiments{ExperimentCounter})(IdxCounter,:);
         
         % What is the proportion of valid responses? If there are no valid
-        % responses then throw a warning but otherwise include it, unless
-        % you have said that InvalidResponses include undetected
-        if length(Timecourse) > 0 && ~any(Default_InvalidResponses == 6)
+        % responses then throw a warning but otherwise include it
+        if length(Timecourse) > 0
             Proportion_Eyetracking_Included=1-(InvalidResponses/length(Timecourse));
         else
             Proportion_Eyetracking_Included=1;

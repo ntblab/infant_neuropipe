@@ -19,7 +19,7 @@
 % Instruction_Idx has an equal length cell that states the frames on which
 % these instructions should be provided
 %
-function [Instructions, Instruction_Idx, Instruction_continuing] = image_specific_instructions(ExperimentName, Line, TabIdx, Instructions, Instruction_Idx, Instruction_continuing, Data, BlockName)
+function [Instructions, Instruction_Idx, Instruction_continuing] = image_specific_instructions(ExperimentName, Line, TabIdx, Instructions, Instruction_Idx, Instruction_continuing, Data, BlockName, TrialStartMessage)
 
 if strcmp(ExperimentName, 'PosnerCuing')
     

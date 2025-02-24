@@ -75,9 +75,11 @@ if pseudorun_criteria > 0
         
         % First we will want to update the run-burn in for the first
         % pseudorun so it can be used in the new fsf files
-        warning('Burn in for the first pseudorun is %d. This is being updated in the run_burn_in.txt file', first_block_burn_in)
-        fprintf(Run_BurnIn_fid, sprintf('functional%02d%s %d\n', Functional_Counter, char('a' + size(pseudorun_timestamps, 1)), first_block_burn_in));
-        
+        if first_block_burn_in ~= BurninTRs
+        	warning('Burn in for the first pseudorun is %d. This is being updated in the run_burn_in.txt file', first_block_burn_in)
+        	fprintf(Run_BurnIn_fid, sprintf('functional%02d%s %d\n', Functional_Counter, char('a' + size(pseudorun_timestamps, 1)), first_block_burn_in));
+        end
+
         % Determine the last block of the Experiment before the change
         next_pseudorun_onset = -1 * first_block_burn_in * TR ; % Start the run at the
         for block_counter = 1:size(Blocks,1)

@@ -66,11 +66,11 @@ then
 	flirt -in $brain_vol -ref $ref_vol -omat $ants_dir/fs_alignment.mat -o ${fs_vol} -dof 6
 
 	# Look at the volumes to compare fit
-	fslview $ref_vol ${fs_vol}
+	fslview_deprecated $ref_vol ${fs_vol}
 
 	printf "\nDoes the mask look correct (i.e., the borders line up precisely with the brain)? Note, in our infant data this is good enough only a third of the time. If the mask is not good enough, press ctrl + C now to quit, otherwise wait 10s\n"
 	echo "If you want to edit it, you can use the alignment you have to make a mask: fslmaths ${fs_vol} -thr 0 -bin $mask_vol; Now make the manual edits. Then do to make the final version: fslmaths $ref_vol -mas $mask_vol $aligned_vol;"
-	sleep 10s
+	sleep 20s
 
 	# Make the freesurfer mask
 	fslmaths ${fs_vol} -thr 0 -bin $mask_vol
@@ -176,7 +176,7 @@ echo flirt -in ${output_prefix}Warped.nii.gz -ref $adult_standard -init $ants_di
 echo antsApplyTransforms -d $dimensionality -i $ants_dir/example_func2highres.nii.gz -o $ants_dir/example_func2infant_standard.nii.gz -r $standard_vol -t ${output_prefix}1Warp.nii.gz -t ${output_prefix}0GenericAffine.mat
 echo flirt -in $ants_dir/example_func2infant_standard.nii.gz -ref $adult_standard -init $ants_dir/infant_standard2standard.mat -applyxfm -o $ants_dir/example_func2standard.nii.gz
 echo flirt -in ${output_prefix}1Warp.nii.gz -init analysis/secondlevel/identity.mat -ref ${output_prefix}1Warp.nii.gz -applyisoxfm 3  -o ${output_prefix}1Warp_3mm.nii.gz
-echo fslview $ants_dir/example_func2standard.nii.gz $manual_reg $adult_standard $ants_dir/highres2standard.nii.gz
+echo fslview_deprecated $ants_dir/example_func2standard.nii.gz $manual_reg $adult_standard $ants_dir/highres2standard.nii.gz
 
 # Wait until the file exists
 while [ ! -e ${output_prefix}Warped.nii.gz ]
@@ -208,7 +208,7 @@ flirt -in $ants_dir/example_func2infant_standard.nii.gz -ref $adult_standard -in
 flirt -in ${output_prefix}1Warp.nii.gz -init analysis/secondlevel/identity.mat -ref ${output_prefix}1Warp.nii.gz -applyisoxfm 3  -o ${output_prefix}1Warp_3mm.nii.gz
 
 echo "Showing the results of ANTs"
-fslview $ants_dir/example_func2standard.nii.gz $manual_reg $adult_standard $ants_dir/highres2standard.nii.gz 
+fslview_deprecated $ants_dir/example_func2standard.nii.gz $manual_reg $adult_standard $ants_dir/highres2standard.nii.gz 
 
 
 

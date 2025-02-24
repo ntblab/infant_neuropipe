@@ -77,7 +77,7 @@ then
 		
 		echo "Check that the alignment is a good approximation" 	
 		printf "Using the following flirt command. If you want to use something else then re-run this and elect to use the specified registration as a base:\n\nflirt -in $example_func -ref $highres -omat $FEAT_DIR/reg/example_func2highres_baseline.mat -o $FEAT_DIR/reg/example_func2highres_baseline.nii.gz -searchrx -10 10 -searchry -10 10 -searchrz -10 10 -dof 6\n"
-		fslview $highres $FEAT_DIR/reg/example_func2highres_baseline.nii.gz
+		fslview_deprecated $highres $FEAT_DIR/reg/example_func2highres_baseline.nii.gz
 		
 		printf "\nWas that alignment in the ballpark? If not press ctrl + C now to quit, otherwise wait 10s\n"
 		sleep 10s 	
@@ -257,7 +257,7 @@ then
 		view_brains="$view_brains $baseline_func"
 	fi
 	
-	fslview $view_brains
+	fslview_deprecated $view_brains
 
 elif [[ $registration_level == "secondlevel_standard" ]]
 then
@@ -313,7 +313,7 @@ then
 
 			# What brain type are they
 			#TRANSFORM_STANDARD=$ATLAS_DIR/nihpd_obj2_asym_nifti/nihpd_asym_2_MNI152_T1_1mm.mat
-			TRANSFORM_STANDARD=${standard_brain::-8}_2_MNI152_T1_1mm.mat
+			TRANSFORM_STANDARD=${standard_brain::-17}_2_MNI152_T1_1mm.mat
 			brain_type='infant'
 			
 		elif [ $Age -lt 200 ]
@@ -321,7 +321,7 @@ then
 
 			# What brain type are they
 			#TRANSFORM_STANDARD=$ATLAS_DIR/nihpd_asym_all_nifti/nihpd_asym_2_MNI152_T1_1mm.mat
-			TRANSFORM_STANDARD=${standard_brain::-8}_2_MNI152_T1_1mm.mat
+			TRANSFORM_STANDARD=${standard_brain::-17}_2_MNI152_T1_1mm.mat
 			brain_type='child'
 				
 		else
@@ -359,7 +359,7 @@ then
 		
 		echo "Check that the alignment is a good approximation" 	
 		printf "Using the following flirt command. If you want to use something else then re-run this and elect to use the specified registration as a base:\n\nflirt -in $FEAT_DIR/reg/highres.nii.gz -ref $FEAT_DIR/reg/standard_${brain_type}.nii.gz -omat $FEAT_DIR/reg/highres2standard_${brain_type}_baseline.mat -o $FEAT_DIR/reg/highres2standard_${brain_type}_baseline.nii.gz -searchrx -10 10 -searchry -10 10 -searchrz -10 10 -dof 6\n\n"
-		fslview $FEAT_DIR/reg/standard_${brain_type}.nii.gz $FEAT_DIR/reg/highres2standard_${brain_type}_automatic.nii.gz
+		fslview_deprecated $FEAT_DIR/reg/standard_${brain_type}.nii.gz $FEAT_DIR/reg/highres2standard_${brain_type}_automatic.nii.gz
 		
 		printf "Was that alignment in the ballpark? If not press ctrl + C now to quit, otherwise wait 10s\n"
 		sleep 10s 	
@@ -378,7 +378,7 @@ then
 			TRANSFORM_STANDARD=$PROJ_DIR/prototype/copy/analysis/secondlevel/identity.mat
 		else
 			#TRANSFORM_STANDARD=$ATLAS_DIR/nihpd_obj2_asym_nifti/nihpd_asym_2_MNI152_T1_1mm.mat
-			TRANSFORM_STANDARD=${standard_brain::-8}_2_MNI152_T1_1mm.mat
+			TRANSFORM_STANDARD=${standard_brain::-17}_2_MNI152_T1_1mm.mat
 		fi
 		
 		printf "\nUsing $FEAT_DIR/reg/highres2standard_${brain_type}_baseline\n"
@@ -393,7 +393,7 @@ then
 		echo convert_xfm -omat nihpd_asym_\${age}_2_MNI152_T1_1mm.mat -concat nihpd_asym_\${age}_2_MNI152_T1_1mm_manual.mat nihpd_asym_\${age}_2_MNI152_T1_1mm_automatic.mat
 		echo flirt -in nihpd_asym_\${age}_t1w.nii -applyxfm -ref /nexsan/apps/hpc/Apps/FSL/5.0.9/data/standard/MNI152_T1_1mm.nii.gz -init nihpd_asym_\${age}_2_MNI152_T1_1mm.mat -o nihpd_asym_\${age}_2_MNI152_T1_1mm.nii.gz; 
 	
-		flirt -in $standard_brain -ref $GLOBAL_STANDARD -omat $TRANSFORM_STANDARD -out ${TRANSFORM_STANDARD::-4}.nii.gz 
+		flirt -in $standard_brain -ref $GLOBAL_STANDARD -omat $TRANSFORM_STANDARD -out ${TRANSFORM_STANDARD::-4}.nii.gz -dof 12
 	fi
 
 	# Clear the directory out for this
@@ -411,7 +411,7 @@ then
 	cd $FEAT_DIR/reg/Manual_Reg_Standard;
 	
 	printf "\n\nOpen these files in Freeview in the desktop (the application, not from terminal):"
-	printf "\nfreeview -v $FEAT_DIR/reg/Manual_Reg_Standard/standard_${brain_type}.nii.gz $FEAT_DIR/reg/Manual_Reg_Standard/highres2standard_${brain_type}_baseline.nii.gz\n\n"
+	printf "\nfreeview -v $FEAT_DIR/reg/Manual_Reg_Standard/standard_${brain_type}.nii.gz $FEAT_DIR/reg/Manual_Reg_Standard/highres2standard_${brain_type}_baseline.nii.gz:colormap=heat:opacity=0.8\n\n"
 	echo "Change the color map of the volume, lower the opacity. Go to Tools>Transform Volume... and align the volume."
 	echo "I recommend performing rigid body transformation first and then do scaling to make it easier to understand"
 	echo "IF YOU ROTATE (EITHER IN Y OR Z) OR TRANSLATE (IN X) THE VOLUME, FLIP THE SIGNS BEFORE SAVING (FSL has a different reference than freeview)"
@@ -487,7 +487,7 @@ then
 	yes | cp  --backup=t highres2standard_${brain_type}.nii.gz highres2standard_${brain_type}_baseline.nii.gz
 		
 	echo "Opening fslview to view the outputs"
-	fslview example_func2standard.nii.gz standard.nii.gz highres2standard.nii.gz;
+	fslview_deprecated example_func2standard.nii.gz standard.nii.gz highres2standard.nii.gz;
 
 else
 	echo "Could not find ${registration_level}"	
