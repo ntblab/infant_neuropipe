@@ -77,7 +77,7 @@ then
 		
 		echo "Check that the alignment is a good approximation" 	
 		printf "Using the following flirt command. If you want to use something else then re-run this and elect to use the specified registration as a base:\n\nflirt -in $example_func -ref $highres -omat $FEAT_DIR/reg/example_func2highres_baseline.mat -o $FEAT_DIR/reg/example_func2highres_baseline.nii.gz -searchrx -10 10 -searchry -10 10 -searchrz -10 10 -dof 6\n"
-		fslview_deprecated $highres $FEAT_DIR/reg/example_func2highres_baseline.nii.gz
+		fsleyes $highres $FEAT_DIR/reg/example_func2highres_baseline.nii.gz
 		
 		printf "\nWas that alignment in the ballpark? If not press ctrl + C now to quit, otherwise wait 10s\n"
 		sleep 10s 	
@@ -257,7 +257,7 @@ then
 		view_brains="$view_brains $baseline_func"
 	fi
 	
-	fslview_deprecated $view_brains
+	fsleyes $view_brains
 
 elif [[ $registration_level == "secondlevel_standard" ]]
 then
@@ -359,7 +359,7 @@ then
 		
 		echo "Check that the alignment is a good approximation" 	
 		printf "Using the following flirt command. If you want to use something else then re-run this and elect to use the specified registration as a base:\n\nflirt -in $FEAT_DIR/reg/highres.nii.gz -ref $FEAT_DIR/reg/standard_${brain_type}.nii.gz -omat $FEAT_DIR/reg/highres2standard_${brain_type}_baseline.mat -o $FEAT_DIR/reg/highres2standard_${brain_type}_baseline.nii.gz -searchrx -10 10 -searchry -10 10 -searchrz -10 10 -dof 6\n\n"
-		fslview_deprecated $FEAT_DIR/reg/standard_${brain_type}.nii.gz $FEAT_DIR/reg/highres2standard_${brain_type}_automatic.nii.gz
+		fsleyes $FEAT_DIR/reg/standard_${brain_type}.nii.gz $FEAT_DIR/reg/highres2standard_${brain_type}_automatic.nii.gz
 		
 		printf "Was that alignment in the ballpark? If not press ctrl + C now to quit, otherwise wait 10s\n"
 		sleep 10s 	
@@ -487,7 +487,7 @@ then
 	yes | cp  --backup=t highres2standard_${brain_type}.nii.gz highres2standard_${brain_type}_baseline.nii.gz
 		
 	echo "Opening fslview to view the outputs"
-	fslview_deprecated example_func2standard.nii.gz standard.nii.gz highres2standard.nii.gz;
+	fsleyes example_func2standard.nii.gz standard.nii.gz highres2standard.nii.gz;
 
 else
 	echo "Could not find ${registration_level}"	
