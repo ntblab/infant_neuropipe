@@ -1032,16 +1032,11 @@ function [AnalysedData, FileIDs] = RunSummary(Func_Files, Functional_Counter, An
 %Load in a nifti
 fprintf('###########################\n*#*#*   RUN SUMMARY   *#*#*\n###########################\n\nChecking actual functional length, may take a minute ...\n')
 if ismac==0
-    %What is the output of fslinfo
-    [~, text]=unix(['fslinfo data/nifti/', Func_Files(Functional_Counter).name]);
-    
-    %Pull out idxs of when this started and ended
-    idx_start=min(strfind(text, 'dim4'));
-    idx_end=min(strfind(text, 'datatype')) - 2;
-    words=regexp(text(idx_start:idx_end),' ','split');
-    
+     %What is the output of fslval for dim4 (number of TRs)
+    [~, text]=unix(['fslval data/nifti/', Func_Files(Functional_Counter).name,' dim4']);
+   
     %How many TRs are reported
-    ActualTRs=str2double(words{end});
+    ActualTRs=str2double(text);
 else
     
     NIFTI=load_untouch_nii(['data/nifti/',Func_Files(Functional_Counter).name]);

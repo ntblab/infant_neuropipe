@@ -2,7 +2,7 @@
 # author: mgsimon@princeton.edu
 # this script sets up global variables for the analysis of the current subject
 # Edited by C Ellis 6/23
-
+# Updated versions SC TSY LB JT 07/19/2023
 set -e # stop immediately when an error occurs
 
 ###### THINGS TO CHANGE ######
@@ -16,14 +16,14 @@ SHORT_PARTITION=short # Partition for jobs <6 hours
 LONG_PARTITION=verylong # Partition for jobs >24 hours
 
 # Modules
-# Load Matlab (tested on R2016b)
-# Load AFNI (tested on 2017-08-11)
-# Load FSL (tested on 5.0.9)
+# Load Matlab (tested on R2022a)
+# Load AFNI (tested on 2023.0.07)
+# Load FSL (tested on 6.0.5)
 # Load Anacoda with python 3.5
-# Load Freesurfer (tested on 6.0.0)
-# Load BXH_XCEDE tools (tested on 1.11.14)
+# Load Freesurfer (tested on 7.3.2)
+# Load BXH_XCEDE tools (tested on 1.11.1)
 # Load brainiak (tested on 0.7.1)
-# Load nilearn (tested on 0.4.0)
+# Load nilearn (tested on 0.5.0)
 # Load ANTs (tested on 2.3.1-foss-2018a)
 
 ##############################
