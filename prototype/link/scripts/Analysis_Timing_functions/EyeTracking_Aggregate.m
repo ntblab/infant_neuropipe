@@ -77,7 +77,7 @@ for CoderCounter=1:length(Coders)
         %Remove the block suffix from some of them
         for ExperimentCounter = 1:length(Experiments)
             if strfind(Experiments{ExperimentCounter}, '_Block_')
-                Experiments_clean{ExperimentCounter}=Experiments{ExperimentCounter}(1:strfind(Experiments{ExperimentCounter}, '_Block_')-1);
+                Experiments_clean{ExperimentCounter}=(1:strfind(Experiments{ExperimentCounter}, '_Block_')-1);
             else
                 Experiments_clean{ExperimentCounter}=Experiments{ExperimentCounter};
             end

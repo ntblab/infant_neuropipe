@@ -33,7 +33,8 @@ DownLeftKey='j'; %Otherwise coded as 11
 DownRightKey='k';  %Otherwise coded as 12
 
 % Additional keys
-BackKey='b';
+BackKey='b'; % go back a frame
+IgnoreKey='n'; % abort the trial and add spacebar/off-screen to all remaining frames 
 
 % 
 % #### IF YOU WANT TO ADD AN ALLOWED RESPONSE CATEGORY, THEN APPEND IT HERE ####
@@ -58,6 +59,7 @@ ResponseAllowed_code{3} = [5, 6, 0];
 ResponseAllowed_code{4} = [1, 2, 6, 0];
 ResponseAllowed_code{5} = [1, 2, 3, 7, 8, 6, 0];
 ResponseAllowed_code{6} = [1, 2, 3, 9, 10, 11, 12 6, 0];
+
 
 % Convert the codes into lists of allowed responses
 for response_categories = 1:length(ResponseAllowed_code)

@@ -28,26 +28,12 @@ for EpochCounter=1:length(Indexes)
         % For each experiment (or group of experiments) specify how long in seconds is this epoch
         if strcmp(Epoch_details{1}, 'PosnerCuing')
             Duration=Block_details.Timing.ITIOns(Epoch_details{4},2)-Block_details.Timing.trialstart(Epoch_details{4},1);
-        elseif strcmp(Epoch_details{1}, 'MemEncode') || strcmp(Epoch_details{1}, 'NarrowingLocalizer')
-            Duration=Block_details.Timing.ShrinkingOffs(Epoch_details{4})-Block_details.Timing.SmallImageOns(Epoch_details{4});
-        elseif strcmp(Epoch_details{1}, 'MemTest')
-            Duration=Block_details.VPC(Epoch_details{4}).Timing.ImageOffs(2)-Block_details.VPC(Epoch_details{4}).Timing.ImageOns(2);
         elseif strcmp(Epoch_details{1}, 'StatLearning') || strcmp(Epoch_details{1}, 'Retinotopy')
             Duration=Block_details.totalRunTime;
         elseif strcmp(Epoch_details{1}, 'EyeTrackerCalib')
             Duration=sum(Block_details.Timing.ITI(Epoch_details{4},:))-Block_details.Timing.TrialOns(Epoch_details{4});
-        elseif strcmp(Epoch_details{1}, 'FPEncode')
-            Duration=Block_details.Timing.ShrinkingOffs(Epoch_details{4})-Block_details.Timing.PlaceOns(Epoch_details{4});
-        elseif strcmp(Epoch_details{1}, 'FPTest')
-            Duration=Block_details.VPC(Epoch_details{4}).Timing.ImageOffs(2)-Block_details.VPC(Epoch_details{4}).Timing.SceneOns(2);
         elseif strcmp(Epoch_details{1}, 'PlayVideo')
             Duration=Block_details.Timing.Movie_1.movieEnd.Local-Block_details.Timing.Movie_1.movieStart.Local;
-        elseif strcmp(Epoch_details{1}, 'MM')
-            Duration=Block_details.Timing.Movie_1.movieEnd.Local-Block_details.Timing.Movie_1.movieStart.Local;
-        elseif strcmp(Epoch_details{1}, 'RepetitionNarrowing')
-            Duration=Block_details.Timing.ShrinkingOffs(Epoch_details{4})-Block_details.Timing.SmallImageOns(Epoch_details{4});
-        elseif strcmp(Epoch_details{1}, 'Saccade_SL')
-            Duration=Block_details.Timing.TestEnd-Block_details.Timing.TestStart;
         else
             warning('%s not detected. This code tries to total up the time for each condition and compare it to the amount of eye tracking data collected. To make this work you must specify when this epoch starts and ends.\n\nRefer to ''ExperimentDefinitions'' to see what names specify the start and end of an epoch.', Epoch_details{1})
             return
