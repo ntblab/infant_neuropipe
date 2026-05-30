@@ -1,5 +1,19 @@
 ## Analysis pipeline for realistic vs. cartoon movie-watching data data
 
+### System requirements
+To run the code in this folder, the following software is needed:
+FSL v6.0.7.9
+Python v3.8.6
+conda v24.3.0
+
+The main notebook and .py analysis scripts were run using the conda environment specified in the dev_brainiak.yml file. The CartoonLive_VisualFeatures_Complexity.ipynb notebook was run using the conda environment specified in the video.yml file.
+
+If you would like to test the full infant_neuropipe pipeline, see main README.md and globals.sh for required software and tested versions.
+
+### Installation guide
+To install, clone this repository in the folder you would like to use it. It should take no more than a few minutes to install on a desktop computer. The main notebook takes several minutes to run if all of the required data is downloaded. 
+
+### Demo and instructions for use
 This document outlines the analyses used to study neural synchrony and feature decoding in participants who watched cartoon and realistic ('live') versions of the same movie. This assumes that all of the infant_neuropipe steps have been run on the raw data. Additionally, it assumed that the following script was run in each subject folder to align the movie data to standard space: `sbatch ./scripts/CartoonLive_analyses/supervisor_CartoonLive.sh default CartoonLive-${movie}_ ${movie} ${ppt_name} ${ppt_out_name}`
 
 Some analyses rely on functions for intersubject correlation, which are stored at `scripts/CartoonLive/modified_isc.py` This script is nearly identical to the intersubject correlation functions in Brainiak, with minor edits to deal with missing data in infant participants. See scripts for details.
