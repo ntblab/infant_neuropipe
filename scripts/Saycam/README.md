@@ -1,0 +1,9 @@
+# Analysis pipeline for naturalistic memory experiment. 
+
+This document outlines the analyses used to study long-term memory of infant experiences in child participants (SAYCam). This assumes that all of the infant_neuropipe steps have been run and that all preprocessing has been completed. It also assumes that the GLM analyses (via FSL FEAT) have been run. Figures from the paper are generated in the jupyter notebook titled `Saycam.ipynb`. 
+
+GLM analyses were run after z-scoring and then concatenating all functional runs for a given participant. The GLM (run using [FSL FEAT](https://fsl.fmrib.ox.ac.uk/fsl/docs/task_fmri/feat/index.html)) included one regressor for each video and half, for a total of 240 regressors (120 videos x two halves). Six motion regressors (three translation and three rotational) and high-motion timepoints (> 3mm) were included as covariates of no interest. Because this was a case study of two participants, we used bootstrap resampling over videos for each contrast of interest. 
+
+Whole-brain analyses were run using bootstrap resampling over the GLM outputs at first level. To speed up the resampling analyses, we used the searchlight module from Brainiak (though note that these are not real searchlight analyses, since they are run at the voxel level). The scripts to run this are located at `Bootstrap_Searchlight.py` and `Bootstrap_Searchlight_Visual.py` for the Self vs. Other contrast and visual contrasts, respectively. These scripts take as input the participant ID ("three_yo" or "nine_yo"), condition ("Real" "RV or "PC" for Self/Other and "All" "Self" or "Other" for visual analyes), and for the Self/Other differences, the half of the video ("first15s" or "last15s").  
+
+Whole-brain results were corrected for multiple comparisons using [FSL's cluster tool](https://fsl.fmrib.ox.ac.uk/fsl/docs/statistics/cluster.html) (t-statistic threshold of 3.1 and p-value of 0.05). 
